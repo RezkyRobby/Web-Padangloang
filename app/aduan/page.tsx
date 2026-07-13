@@ -1,0 +1,263 @@
+"use client";
+
+import { useState } from "react";
+import { toast } from "sonner";
+import Navbar from "@/components/custom/navbar";
+import Footer from "@/components/custom/footer";
+import Image from "next/image";
+import { MapPin, Phone, Mail, Clock, Loader2 } from "lucide-react";
+
+interface FormState {
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  content: string;
+}
+
+export default function AduanPage() {
+  const [form, setForm] = useState<FormState>({
+    fullName: "",
+    email: "",
+    phoneNumber: "",
+    content: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: form.fullName.trim(),
+          email: form.email.trim(),
+          phoneNumber: form.phoneNumber.trim() || null,
+          content: form.content.trim(),
+        }),
+      });
+      if (res.ok) {
+        toast.success(
+          "Pesan berhasil dikirim! Kami akan segera menghubungi Anda.",
+        );
+        setForm({ fullName: "", email: "", phoneNumber: "", content: "" });
+      } else {
+        const json = await res.json();
+        toast.error((json.error as string) ?? "Gagal mengirim pesan.");
+      }
+    } catch {
+      toast.error("Terjadi kesalahan. Silakan coba lagi.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <Navbar variant="public" />
+
+      <main className="pt-20 pb-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          {/* Hero Image */}
+          <div className="mb-12 overflow-hidden rounded-2xl shadow-2xl">
+            <Image
+              src="/kontak.jpg"
+              alt="Kodim 1408 Makassar"
+              width={1200}
+              height={500}
+              className="w-full h-auto object-cover"
+              priority
+            />
+          </div>
+
+          {/* Header */}
+          <div className="mb-12 text-center">
+            <h1 className="mb-3 text-4xl font-black leading-tight md:text-5xl">
+              Aduan Kodim 1408 Makassar
+            </h1>
+            <p className="text-xl font-semibold text-primary">
+              TNI AD Profesional di Kota Metropolitan Timur
+            </p>
+          </div>
+
+          {/* Two-column grid */}
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            {/* Contact Info */}
+            <div className="rounded-2xl bg-card p-8 shadow-xl">
+              <h2 className="mb-6 text-2xl font-bold">Informasi Kontak</h2>
+              <div className="space-y-6">
+                {/* Address */}
+                <div className="flex gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <MapPin className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="mb-1 font-bold">Alamat Markas</h3>
+                    <p className="leading-relaxed text-foreground/60">
+                      Jl. Lanto Dg. Pasewang, Maricaya Sel, Kec. Mamajang, Kota Makassar, Sulsel 90142
+                    </p>
+                  </div>
+                </div>
+
+                {/* Phone */}
+                <div className="flex gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <Phone className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="mb-1 font-bold">Nomor Telepon</h3>
+                    <a
+                      href="tel:+62411123456"
+                      className="text-foreground/60 transition-colors hover:text-primary"
+                    >
+                      -
+                    </a>
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div className="flex gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <Mail className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="mb-1 font-bold">Email Resmi</h3>
+                    <a
+                      href="mailto:info@kodim1408mks.mil.id"
+                      className="text-foreground/60 transition-colors hover:text-primary"
+                    >
+                      kodim1408bsmakassar@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                {/* Hours */}
+                <div className="flex gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <Clock className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="mb-1 font-bold">Jam Operasional</h3>
+                    <p className="leading-relaxed text-foreground/60">
+                      Senin – Jumat: 07.00 – 17.00 WITA
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Form */}
+            <div className="rounded-2xl bg-card p-8 shadow-xl">
+              <h2 className="mb-6 text-2xl font-bold">Formulir Aduan</h2>
+              <form className="space-y-5" onSubmit={handleSubmit}>
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="mb-2 block text-sm font-semibold text-foreground/70"
+                  >
+                    Nama Lengkap
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Masukkan nama lengkap Anda"
+                    required
+                    value={form.fullName}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, fullName: e.target.value }))
+                    }
+                    className="w-full rounded-lg border border-foreground/20 bg-background px-4 py-3 text-foreground outline-none transition-all placeholder:text-foreground/40 focus:border-transparent focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="mb-2 block text-sm font-semibold text-foreground/70"
+                  >
+                    Alamat Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="contoh@email.com"
+                    required
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, email: e.target.value }))
+                    }
+                    className="w-full rounded-lg border border-foreground/20 bg-background px-4 py-3 text-foreground outline-none transition-all placeholder:text-foreground/40 focus:border-transparent focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="phone"
+                    className="mb-2 block text-sm font-semibold text-foreground/70"
+                  >
+                    Nomor Telepon
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    placeholder="08xx xxxx xxxx"
+                    value={form.phoneNumber}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, phoneNumber: e.target.value }))
+                    }
+                    className="w-full rounded-lg border border-foreground/20 bg-background px-4 py-3 text-foreground outline-none transition-all placeholder:text-foreground/40 focus:border-transparent focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="message"
+                    className="mb-2 block text-sm font-semibold text-foreground/70"
+                  >
+                    Aduan Anda
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={5}
+                    placeholder="Tulis aduan Anda di sini..."
+                    required
+                    value={form.content}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, content: e.target.value }))
+                    }
+                    className="w-full resize-none rounded-lg border border-foreground/20 bg-background px-4 py-3 text-foreground outline-none transition-all placeholder:text-foreground/40 focus:border-transparent focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-4 font-bold text-primary-foreground transition-all duration-300 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-4 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {submitting && <Loader2 className="size-4 animate-spin" />}
+                  {submitting ? "Mengirim..." : "Kirim Pesan"}
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {/* Map */}
+          <div className="mt-8 overflow-hidden rounded-2xl shadow-2xl">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d169.56693414864728!2d119.42058545394917!3d-5.151376479626394!2m3!1f227.33551088724099!2f45!3f0!3m2!1i1024!2i768!4f35!3m3!1m2!1s0x2dbf1d6149a5fee7%3A0x847d676acdebad1e!2sKodim%201408%2FBS!5e1!3m2!1sen!2sid!4v1771939180685!5m2!1sen!2sid"
+              className="w-full"
+              style={{ height: "clamp(300px, 41.67vw, 500px)", border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Lokasi Kodim 1408 Makassar"
+            />
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

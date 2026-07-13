@@ -1,0 +1,70 @@
+import { NextRequest, NextResponse } from "next/server";
+import { v2 as cloudinary } from "cloudinary";
+import { requireAuth } from "@/lib/dal";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+
+// POST /api/upload
+// Uploads an image file to Cloudinary. Requires authentication.
+// Body: multipart/form-data — fields: file (image), folder (optional, default: "portal-berita")
+// Allowed types: JPG, PNG, GIF, WebP. Max size: 5 MB.
+export async function POST(req: NextRequest) {
+  try {
+    const authResult = await requireAuth();
+    if (!authResult.ok) return authResult.response;
+
+    const formData = await req.formData();
+    const file = formData.get("file");
+    const folder = (formData.get("folder") as string | null) ?? "portal-berita";
+
+    if (!(file instanceof File)) {
+      return NextResponse.json(
+        { error: "File tidak ditemukan atau tidak valid" },
+        { status: 400 },
+      );
+    }
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return NextResponse.json(
+        {
+          error:
+            "Format file tidak didukung. Gunakan JPG, PNG, GIF, atau WebP.",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (file.size > MAX_SIZE_BYTES) {
+      return NextResponse.json(
+        { error: "Ukuran file melebihi batas 5 MB." },
+        { status: 400 },
+      );
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const dataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
+
+    const result = await cloudinary.uploader.upload(dataUri, {
+      folder,
+      resource_type: "image",
+    });
+
+    return NextResponse.json({
+      url: result.secure_url,
+      publicId: result.public_id,
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "Gagal mengunggah gambar. Coba lagi." },
+      { status: 500 },
+    );
+  }
+}
