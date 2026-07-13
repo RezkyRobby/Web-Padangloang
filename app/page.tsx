@@ -7,6 +7,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/custom/navbar";
+import { HeroSection } from "@/components/landing/hero-section";
+import { StatsSection } from "@/components/landing/stats-section";
 import Footer from "@/components/custom/footer";
 import type { DateRange } from "react-day-picker";
 import { format } from "date-fns";
@@ -144,7 +146,10 @@ function BerandaContent() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar variant="public" />
-      <div className="h-16" />
+
+      <HeroSection />
+
+      <StatsSection />
 
       <main className="mx-auto max-w-7xl px-4 py-8">
         <div className="flex gap-6">
