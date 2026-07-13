@@ -160,3 +160,98 @@ model Message {
 
   @@map("message")
 }
+
+// --- DESA PADANGLOANG MODELS ---
+
+enum WisataKategori {
+  WISATA_ALAM
+  KULINER
+  BUDAYA
+
+  @@map("wisata_kategori")
+}
+
+model Desa {
+  id              String   @id @default(cuid())
+  nama            String
+  sejarah         String   @db.Text
+  visi            String   @db.Text
+  misi            String   @db.Text
+  luasWilayah     Float?
+  jumlahPenduduk  Int?
+  jumlahKK        Int?
+  jumlahDusun     Int?
+  batasUtara      String?
+  batasTimur      String?
+  batasSelatan    String?
+  batasBarat      String?
+  fotoKepalaDesa  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("desa")
+}
+
+model PerangkatDesa {
+  id        String   @id @default(cuid())
+  nama      String
+  jabatan   String
+  foto      String?
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("perangkat_desa")
+}
+
+model UMKM {
+  id         String   @id @default(cuid())
+  namaProduk String
+  deskripsi  String   @db.Text
+  harga      String?
+  kategori   String
+  kontak     String
+  gambar     String?
+  pemilik    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("umkm")
+}
+
+model Wisata {
+  id         String         @id @default(cuid())
+  nama       String
+  deskripsi  String         @db.Text
+  lokasi     String
+  kategori   WisataKategori
+  gambar     String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@map("wisata")
+}
+
+model Galeri {
+  id           String   @id @default(cuid())
+  judul        String
+  gambar       String
+  kategori     String
+  uploadedById String
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("galeri")
+}
+
+model Infografis {
+  id        String   @id @default(cuid())
+  judul     String
+  tahun     Int
+  dataJson  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("infografis")
+}
