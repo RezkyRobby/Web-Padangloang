@@ -423,7 +423,7 @@ export async function POST(req: NextRequest) {
 - [x] 7. Setup Cloudinary upload route
 
 ### Fase 2 — Halaman Public (Hari 6–9)
-- [ ] 8a. Beranda: Hero section + statistik desa
+- [x] 8a. Beranda: Hero section + statistik desa
 - [ ] 8b. Beranda: Featured UMKM + Wisata terbaru
 - [ ] 8c. Beranda: Galeri foto grid + pengumuman desa (breaking news)
 - [ ] 9. Modifikasi halaman profil dengan data Desa

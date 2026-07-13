@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/custom/navbar";
 import { HeroSection } from "@/components/landing/hero-section";
 import { StatsSection } from "@/components/landing/stats-section";
+import { FeaturedSection } from "@/components/landing/featured-section";
 import Footer from "@/components/custom/footer";
 import type { DateRange } from "react-day-picker";
 import { format } from "date-fns";
@@ -150,6 +151,8 @@ function BerandaContent() {
       <HeroSection />
 
       <StatsSection />
+
+      <FeaturedSection />
 
       <main className="mx-auto max-w-7xl px-4 py-8">
         <div className="flex gap-6">
