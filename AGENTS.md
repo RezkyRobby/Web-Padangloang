@@ -10,7 +10,7 @@ Panduan teknis untuk AI agent dalam membangun Website Profil Desa Padangloang, K
 - Jangan melanjutkan ke task berikutnya dalam run yang sama
 - Setelah task selesai, **ubah tanda `[ ]` menjadi `[x]`** di daftar Section 8 untuk menandai progress
 - Setelah selesai, laporkan hasil dan tunggu perintah untuk run berikutnya
-- **Sebelum mulai mengerjakan task apa pun, baca `DESIGN.md`** untuk referensi warna, font, spacing, shadow, dan komponen styling — gunakan sebagai panduan visual di setiap halaman yang dibuat/dimodifikasi
+- **Sebelum mulai mengerjakan task apa pun, baca `PROJECT_STRUCTURE.md`** untuk mengetahui struktur proyek terkini, **lalu baca `DESIGN.md`** untuk referensi warna, font, spacing, shadow, dan komponen styling — gunakan sebagai panduan visual di setiap halaman yang dibuat/dimodifikasi
 
 ### 0.2 Commit Per Task
 - SETELAH setiap task selesai dan sudah diverifikasi, WAJIB melakukan git commit
@@ -424,7 +424,7 @@ export async function POST(req: NextRequest) {
 
 ### Fase 2 — Halaman Public (Hari 6–9)
 - [x] 8a. Beranda: Hero section + statistik desa
-- [ ] 8b. Beranda: Featured UMKM + Wisata terbaru
+- [x] 8b. Beranda: Featured UMKM + Wisata terbaru
 - [ ] 8c. Beranda: Galeri foto grid + pengumuman desa (breaking news)
 - [ ] 9. Modifikasi halaman profil dengan data Desa
 - [ ] 10. Modifikasi halaman visi-misi dari program-satuan
