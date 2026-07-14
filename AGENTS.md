@@ -427,12 +427,12 @@ export async function POST(req: NextRequest) {
 - [x] 8b. Beranda: Featured UMKM + Wisata terbaru
 - [x] 8c. Beranda: Galeri foto grid + pengumuman desa (breaking news)
 - [x] 9. Modifikasi halaman profil dengan data Desa
-- [ ] 10. Modifikasi halaman visi-misi dari program-satuan
-- [ ] 11. Buat halaman UMKM + detail
-- [ ] 12. Buat halaman Wisata + detail
-- [ ] 13. Buat halaman Galeri + lightbox
-- [ ] 14. Buat halaman Infografis + IDM
-- [ ] 15. Modifikasi halaman kontak + Google Maps
+- [x] 10. Modifikasi halaman visi-misi dari program-satuan
+- [ ] 11. Buat halaman UMKM + detail (placeholder siap)
+- [ ] 12. Buat halaman Wisata + detail (placeholder siap)
+- [ ] 13. Buat halaman Galeri + lightbox (placeholder siap)
+- [ ] 14. Buat halaman Infografis + IDM (placeholder siap)
+- [x] 15. Modifikasi halaman kontak + Google Maps
 
 ### Fase 3 — Admin & CRUD (Hari 10–12)
 - [ ] 16a. API routes untuk UMKM (list, create, get, update, delete)
