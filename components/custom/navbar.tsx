@@ -22,6 +22,11 @@ import {
   History,
   UserCheck,
   Network,
+  MapPin,
+  Landmark,
+  ImageIcon,
+  BarChart3,
+  Globe,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -58,21 +63,44 @@ function isDropdown(item: NavItem): item is NavDropdown {
   return "children" in item;
 }
 
+// --- Nav Items untuk Desa Padangloang ---
 const profilDropdown: NavDropdown = {
-  label: "Profil Satuan",
+  label: "Profil",
   href: "/profil",
   children: [
-    { label: "Sejarah Satuan", href: "/profil/sejarah-satuan", icon: History },
-    { label: "Pejabat Kodim 1408/MKS", href: "/profil/pejabat-kodim", icon: UserCheck },
-    { label: "Struktur Organisasi", href: "/profil/struktur-organisasi", icon: Network },
+    { label: "Sejarah", href: "/profil", icon: History },
+    { label: "Visi & Misi", href: "/profil/visi-misi", icon: UserCheck },
+    { label: "Struktur Organisasi", href: "/profil/struktur", icon: Network },
+    { label: "Perangkat Desa", href: "/profil/perangkat", icon: Users },
+  ],
+};
+
+const informasiDropdown: NavDropdown = {
+  label: "Informasi",
+  href: "/news",
+  children: [
+    { label: "Berita", href: "/news", icon: FileText },
+    { label: "Galeri", href: "/galeri", icon: ImageIcon },
+    { label: "Infografis", href: "/infografis", icon: BarChart3 },
+    { label: "IDM", href: "/idm", icon: Globe },
+  ],
+};
+
+const potensiDropdown: NavDropdown = {
+  label: "Potensi",
+  href: "/umkm",
+  children: [
+    { label: "UMKM", href: "/umkm", icon: Landmark },
+    { label: "Wisata", href: "/wisata", icon: MapPin },
   ],
 };
 
 const publicLinks: NavItem[] = [
   { label: "Beranda", href: "/" },
   profilDropdown,
-  { label: "Program Satuan", href: "/program-satuan" },
-  { label: "Aduan", href: "/aduan" },
+  informasiDropdown,
+  potensiDropdown,
+  { label: "Kontak", href: "/kontak" },
 ];
 
 const dashboardLinks: NavLink[] = [
@@ -103,7 +131,9 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
   const router = useRouter();
   const { data: session } = authClient.useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileProfilOpen, setMobileProfilOpen] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(
+    null,
+  );
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -140,339 +170,494 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
     router.refresh();
   }
 
-  return (
-    <header
-      className="fixed top-0 left-0 right-0 z-50 border-b border-foreground/10 bg-card/70 backdrop-blur-md"
-      data-search-open={searchOpen}
-    >
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 md:px-8">
-        {/* ── Logo & Title ── */}
-        <Link href="/" className="flex shrink-0 items-center gap-3">
-          <Image
-            src="/logo.png"
-            alt="Logo Kodim"
-            width={36}
-            height={36}
-            className="rounded-sm object-contain"
-            priority
-          />
-          <div className="flex flex-col leading-tight">
-            <span className="text-[15px] font-extrabold tracking-tight">
-              KODIM 1408/MKS
-            </span>
-            <span className="text-[10px] font-bold tracking-wide text-foreground/70">
-              MAEIKI A&apos;BULO SIBATANG
-            </span>
-          </div>
-        </Link>
+  function toggleMobileDropdown(label: string) {
+    setMobileDropdownOpen((prev) => (prev === label ? null : label));
+  }
 
-        {/* ── Desktop Navigation ── */}
-        <ul className="hidden flex-1 items-center justify-center gap-1 md:flex">
-          {links.map((link) => {
-            if (isDropdown(link)) {
-              const dropdownActive = pathname.startsWith(link.href);
-              return (
-                <li key={link.href}>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        className={cn(
-                          "flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors outline-none",
-                          dropdownActive
-                            ? "bg-primary/10 text-primary"
-                            : "text-foreground hover:bg-foreground/10",
-                        )}
-                      >
-                        {link.label}
-                        <ChevronDown className="size-3.5" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="min-w-55">
-                      <DropdownMenuGroup>
-                        {link.children.map((child) => {
-                          const childActive = pathname === child.href;
-                          const ChildIcon = child.icon;
-                          return (
-                            <DropdownMenuItem key={child.href} asChild>
-                              <Link
-                                href={child.href}
-                                className={cn(
-                                  childActive && "bg-primary/10 text-primary",
-                                )}
-                              >
-                                <ChildIcon className="size-4" />
-                                {child.label}
-                              </Link>
-                            </DropdownMenuItem>
-                          );
-                        })}
-                      </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </li>
-              );
-            }
-            const Icon = dashboardIcons[link.href];
-            const active =
-              link.href === "/" || link.href === "/dashboard"
-                ? pathname === link.href
-                : pathname.startsWith(link.href);
-            return (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                    active
-                      ? "bg-primary/10 text-primary"
-                      : "text-foreground hover:bg-foreground/10",
-                  )}
+  // ── Desktop Navigation ──
+  const renderDesktopNav = () => (
+    <ul className="hidden items-center gap-0.5 md:flex">
+      {links.map((link) => {
+        if (isDropdown(link)) {
+          const dropdownActive = pathname.startsWith(link.href) && link.href !== "/";
+          return (
+            <li key={link.href}>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className={cn(
+                      "flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-semibold text-white transition-colors outline-none hover:bg-white/10",
+                      dropdownActive && "bg-white/15",
+                    )}
+                  >
+                    {link.label}
+                    <ChevronDown className="size-3.5" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className="min-w-48 border border-[#dee2de] bg-white p-1 shadow-lg"
                 >
-                  {Icon && <Icon className="size-4 shrink-0" />}
-                  {link.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+                  <DropdownMenuGroup>
+                    {link.children.map((child) => {
+                      const childActive = pathname === child.href;
+                      const ChildIcon = child.icon;
+                      return (
+                        <DropdownMenuItem key={child.href} asChild>
+                          <Link
+                            href={child.href}
+                            className={cn(
+                              "flex items-center gap-3 px-4 py-3 text-[13px] font-semibold text-[#282834] hover:bg-[#f9faf7]",
+                              childActive && "!bg-[#f9faf7] font-bold",
+                            )}
+                          >
+                            <ChildIcon className="size-4 shrink-0 text-[#282834]/60" />
+                            {child.label}
+                          </Link>
+                        </DropdownMenuItem>
+                      );
+                    })}
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </li>
+          );
+        }
+        const active =
+          link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+        return (
+          <li key={link.href}>
+            <Link
+              href={link.href}
+              className={cn(
+                "flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-white/10",
+                active && "bg-white/15",
+              )}
+            >
+              {link.label}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
+  );
 
-        {/* ── Right Side: Theme + Avatar ── */}
-        <div className="flex shrink-0 items-center gap-1">
-          {pathname === "/" && (
+  // ── Mobile Drawer ──
+  const renderMobileDrawer = () => (
+    <div
+      className={cn(
+        "fixed inset-0 z-40 transition-all duration-300 md:hidden",
+        mobileOpen
+          ? "pointer-events-auto opacity-100"
+          : "pointer-events-none opacity-0",
+      )}
+    >
+      {/* Overlay */}
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={() => setMobileOpen(false)}
+      />
+      {/* Drawer */}
+      <div
+        className={cn(
+          "absolute right-0 top-0 h-full w-72 bg-[#282834] shadow-xl transition-transform duration-300",
+          mobileOpen ? "translate-x-0" : "translate-x-full",
+        )}
+      >
+        <div className="flex h-full flex-col">
+          {/* Drawer Header */}
+          <div className="flex items-center justify-between border-b border-white/10 p-4">
+            <div className="flex items-center gap-3">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={32}
+                height={32}
+                className="rounded-sm object-contain brightness-0 invert"
+              />
+              <span className="text-[15px] font-extrabold text-white">
+                Desa Padangloang
+              </span>
+            </div>
             <Button
               variant="ghost"
               size="icon"
-              className={cn(
-                "size-9 transition-colors",
-                searchOpen && "bg-primary/10 text-primary",
-              )}
-              onClick={() => setSearchOpen((o) => !o)}
-              aria-label="Cari berita"
+              className="text-white hover:bg-white/10"
+              onClick={() => setMobileOpen(false)}
             >
-              <Search className="size-4" />
-            </Button>
-          )}
-          <ThemeToggle />
-
-          {/* Avatar Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="size-9 rounded-full p-0 focus-visible:ring-2"
-              >
-                <Avatar className="size-8">
-                  <AvatarImage
-                    src={session?.user?.image ?? undefined}
-                    alt={session?.user?.name ?? "Pengguna"}
-                  />
-                  <AvatarFallback className="text-xs bg-foreground/10 text-foreground">
-                    {getInitials(session?.user?.name)}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end" className="w-48">
-              {session ? (
-                <>
-                  <DropdownMenuLabel className="font-normal">
-                    <p className="truncate text-sm font-medium text-foreground">
-                      {session.user.name}
-                    </p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {session.user.email}
-                    </p>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                    {isPrivileged && (
-                      <DropdownMenuItem asChild>
-                        <Link href="/dashboard">
-                          <LayoutDashboard />
-                          Dashboard
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem asChild>
-                      <Link href={`/akun/${session.user.id}`}>
-                        <User />
-                        Profil
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      variant="destructive"
-                      onClick={handleSignOut}
-                    >
-                      <LogOut />
-                      Keluar
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </>
-              ) : (
-                <DropdownMenuGroup>
-                  <DropdownMenuItem asChild>
-                    <Link href="/auth/signin">
-                      <LogIn />
-                      Masuk
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/auth/signup">
-                      <UserPlus />
-                      Daftar
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Mobile hamburger */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setMobileOpen((o) => !o)}
-            aria-label="Toggle menu"
-          >
-            {mobileOpen ? (
               <X className="size-5" />
-            ) : (
-              <Menu className="size-5" />
-            )}
-          </Button>
-        </div>
-      </nav>
-
-      {/* ── Search Dropdown ── */}
-      {pathname === "/" && (
-        <div
-          className={cn(
-            "overflow-hidden border-foreground/10 bg-card/90 backdrop-blur-md transition-all duration-300 ease-in-out",
-            searchOpen ? "max-h-20 border-t py-3" : "max-h-0 border-t-0 py-0",
-          )}
-        >
-          <form
-            onSubmit={handleSearchSubmit}
-            className="mx-auto flex max-w-7xl items-center gap-3 px-4 md:px-8"
-          >
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-foreground/40" />
-              <Input
-                ref={searchInputRef}
-                type="search"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                onKeyDown={(e) => e.key === "Escape" && setSearchOpen(false)}
-                placeholder="Cari berita..."
-                className="pl-9"
-              />
-            </div>
-            <Button type="submit" size="sm" className="shrink-0">
-              Cari
             </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="shrink-0"
-              onClick={() => setSearchOpen(false)}
-            >
-              Batal
-            </Button>
-          </form>
-        </div>
-      )}
+          </div>
 
-      {/* ── Mobile Menu ── */}
-      {mobileOpen && (
-        <div className="border-t border-foreground/10 bg-card/90 px-4 pb-4 pt-2 backdrop-blur-md md:hidden">
-          <ul className="flex flex-col gap-1">
-            {links.map((link) => {
-              if (isDropdown(link)) {
-                const dropdownActive = pathname.startsWith(link.href);
+          {/* Drawer Nav Items */}
+          <div className="flex-1 overflow-y-auto p-4">
+            <ul className="flex flex-col gap-1">
+              {links.map((link) => {
+                if (isDropdown(link)) {
+                  const isOpen = mobileDropdownOpen === link.label;
+                  return (
+                    <li key={link.href}>
+                      <button
+                        onClick={() => toggleMobileDropdown(link.label)}
+                        className="flex w-full items-center justify-between rounded-md px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                      >
+                        {link.label}
+                        <ChevronDown
+                          className={cn(
+                            "size-4 transition-transform",
+                            isOpen && "rotate-180",
+                          )}
+                        />
+                      </button>
+                      <div
+                        className={cn(
+                          "overflow-hidden transition-all duration-200 ease-in-out",
+                          isOpen ? "max-h-60" : "max-h-0",
+                        )}
+                      >
+                        <ul className="ml-2 flex flex-col gap-0.5 border-l-2 border-white/10 pl-3 pt-1">
+                          {link.children.map((child) => {
+                            const childActive = pathname === child.href;
+                            const ChildIcon = child.icon;
+                            return (
+                              <li key={child.href}>
+                                <Link
+                                  href={child.href}
+                                  onClick={() => {
+                                    setMobileOpen(false);
+                                    setMobileDropdownOpen(null);
+                                  }}
+                                  className={cn(
+                                    "flex items-center gap-3 rounded-md px-4 py-2.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white",
+                                    childActive &&
+                                      "bg-white/15 font-semibold text-white",
+                                  )}
+                                >
+                                  <ChildIcon className="size-4 shrink-0 text-white/60" />
+                                  {child.label}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    </li>
+                  );
+                }
+                const active =
+                  link.href === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(link.href);
                 return (
                   <li key={link.href}>
-                    <button
-                      onClick={() => setMobileProfilOpen((o) => !o)}
+                    <Link
+                      href={link.href}
+                      onClick={() => setMobileOpen(false)}
                       className={cn(
-                        "flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-semibold transition-colors",
-                        dropdownActive
-                          ? "text-primary"
-                          : "text-foreground hover:bg-foreground/10",
+                        "flex items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10",
+                        active && "bg-white/15",
                       )}
                     >
                       {link.label}
-                      <ChevronDown
-                        className={cn(
-                          "size-4 transition-transform",
-                          mobileProfilOpen && "rotate-180",
-                        )}
-                      />
-                    </button>
-                    <div
-                      className={cn(
-                        "overflow-hidden transition-all duration-200 ease-in-out",
-                        mobileProfilOpen ? "max-h-60" : "max-h-0",
-                      )}
-                    >
-                      <ul className="ml-2 flex flex-col gap-0.5 border-l-2 border-foreground/10 pl-3 pt-1">
-                        {link.children.map((child) => {
-                          const childActive = pathname === child.href;
-                          const ChildIcon = child.icon;
-                          return (
-                            <li key={child.href}>
-                              <Link
-                                href={child.href}
-                                onClick={() => {
-                                  setMobileOpen(false);
-                                  setMobileProfilOpen(false);
-                                }}
-                                className={cn(
-                                  "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                                  childActive
-                                    ? "bg-primary/10 text-primary"
-                                    : "text-foreground hover:bg-foreground/10",
-                                )}
-                              >
-                                <ChildIcon className="size-4 shrink-0" />
-                                {child.label}
-                              </Link>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
+                    </Link>
                   </li>
                 );
-              }
-              const Icon = dashboardIcons[link.href];
-              const active =
-                link.href === "/" || link.href === "/dashboard"
-                  ? pathname === link.href
-                  : pathname.startsWith(link.href);
-              return (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={cn(
-                      "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                      active
-                        ? "bg-primary/10 text-primary"
-                        : "text-foreground hover:bg-foreground/10",
-                    )}
-                  >
-                    {Icon && <Icon className="size-4 shrink-0" />}
-                    {link.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+              })}
+            </ul>
+          </div>
+
+          {/* Drawer Footer */}
+          <div className="border-t border-white/10 p-4">
+            <ThemeToggle />
+          </div>
         </div>
-      )}
-    </header>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      <header
+        className={cn(
+          "fixed left-0 right-0 top-0 z-50",
+          variant === "dashboard" &&
+            "border-b border-foreground/10 bg-card/70 backdrop-blur-md",
+        )}
+        data-search-open={searchOpen}
+      >
+        {variant === "dashboard" ? (
+          /* ── Dashboard Navbar (existing style, minor update) ── */
+          <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 md:px-8">
+            <Link href="/" className="flex shrink-0 items-center gap-3">
+              <Image
+                src="/logo.png"
+                alt="Logo Desa Padangloang"
+                width={36}
+                height={36}
+                className="rounded-sm object-contain"
+                priority
+              />
+              <div className="flex flex-col leading-tight">
+                <span className="text-[15px] font-extrabold tracking-tight">
+                  Desa Padangloang
+                </span>
+                <span className="text-[10px] font-bold tracking-wide text-foreground/70">
+                  Kec. Dua Pitue, Kab. Sidenreng Rappang
+                </span>
+              </div>
+            </Link>
+
+            <ul className="hidden flex-1 items-center justify-center gap-1 md:flex">
+              {visibleDashboardLinks.map((link) => {
+                const Icon = dashboardIcons[link.href];
+                const active =
+                  link.href === "/dashboard"
+                    ? pathname === link.href
+                    : pathname.startsWith(link.href);
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                        active
+                          ? "bg-primary/10 text-primary"
+                          : "text-foreground hover:bg-foreground/10",
+                      )}
+                    >
+                      {Icon && <Icon className="size-4 shrink-0" />}
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="flex shrink-0 items-center gap-1">
+              <ThemeToggle />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="size-9 rounded-full p-0 focus-visible:ring-2"
+                  >
+                    <Avatar className="size-8">
+                      <AvatarImage
+                        src={session?.user?.image ?? undefined}
+                        alt={session?.user?.name ?? "Pengguna"}
+                      />
+                      <AvatarFallback className="bg-foreground/10 text-xs text-foreground">
+                        {getInitials(session?.user?.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  {session ? (
+                    <>
+                      <DropdownMenuLabel className="font-normal">
+                        <p className="truncate text-sm font-medium text-foreground">
+                          {session.user.name}
+                        </p>
+                        <p className="truncate text-xs text-muted-foreground">
+                          {session.user.email}
+                        </p>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        {isPrivileged && (
+                          <DropdownMenuItem asChild>
+                            <Link href="/dashboard">
+                              <LayoutDashboard />
+                              Dashboard
+                            </Link>
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem asChild>
+                          <Link href={`/akun/${session.user.id}`}>
+                            <User />
+                            Profil
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          variant="destructive"
+                          onClick={handleSignOut}
+                        >
+                          <LogOut />
+                          Keluar
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </>
+                  ) : (
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem asChild>
+                        <Link href="/auth/signin">
+                          <LogIn />
+                          Masuk
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/auth/signup">
+                          <UserPlus />
+                          Daftar
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                onClick={() => setMobileOpen((o) => !o)}
+                aria-label="Toggle menu"
+              >
+                {mobileOpen ? (
+                  <X className="size-5" />
+                ) : (
+                  <Menu className="size-5" />
+                )}
+              </Button>
+            </div>
+          </nav>
+        ) : (
+          /* ── Public Navbar (Floating Island) ── */
+          <nav className="mx-auto mt-3 flex max-w-5xl items-center justify-between rounded-full bg-[#282834] px-6 py-2 shadow-lg max-md:mx-4 max-md:px-4">
+            {/* Logo */}
+            <Link href="/" className="flex shrink-0 items-center gap-3">
+              <Image
+                src="/logo.png"
+                alt="Logo Desa Padangloang"
+                width={32}
+                height={32}
+                className="rounded-sm object-contain brightness-0 invert"
+                priority
+              />
+              <div className="flex flex-col leading-tight">
+                <span className="text-[13px] font-extrabold tracking-tight text-white max-sm:hidden">
+                  Desa Padangloang
+                </span>
+                <span className="text-[9px] font-bold tracking-wide text-white/70 max-sm:hidden">
+                  Kec. Dua Pitue, Kab. Sidenreng Rappang
+                </span>
+              </div>
+            </Link>
+
+            {/* Desktop Nav */}
+            {renderDesktopNav()}
+
+            {/* Right side */}
+            <div className="flex shrink-0 items-center gap-1">
+              <ThemeToggle />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="size-8 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-white/30"
+                  >
+                    <Avatar className="size-7">
+                      <AvatarImage
+                        src={session?.user?.image ?? undefined}
+                        alt={session?.user?.name ?? "Pengguna"}
+                      />
+                      <AvatarFallback className="bg-white/10 text-[10px] text-white">
+                        {getInitials(session?.user?.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-48 border border-[#dee2de] bg-white"
+                >
+                  {session ? (
+                    <>
+                      <DropdownMenuLabel className="font-normal">
+                        <p className="truncate text-sm font-medium text-[#282834]">
+                          {session.user.name}
+                        </p>
+                        <p className="truncate text-xs text-[#282834]/60">
+                          {session.user.email}
+                        </p>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-[#dee2de]" />
+                      <DropdownMenuGroup>
+                        {isPrivileged && (
+                          <DropdownMenuItem asChild>
+                            <Link
+                              href="/dashboard"
+                              className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] hover:bg-[#f9faf7]"
+                            >
+                              <LayoutDashboard className="size-4" />
+                              Dashboard
+                            </Link>
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/akun/${session.user.id}`}
+                            className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] hover:bg-[#f9faf7]"
+                          >
+                            <User className="size-4" />
+                            Profil
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          variant="destructive"
+                          onClick={handleSignOut}
+                        >
+                          <LogOut />
+                          Keluar
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </>
+                  ) : (
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/auth/signin"
+                          className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] hover:bg-[#f9faf7]"
+                        >
+                          <LogIn className="size-4" />
+                          Masuk
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/auth/signup"
+                          className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] hover:bg-[#f9faf7]"
+                        >
+                          <UserPlus className="size-4" />
+                          Daftar
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/10 md:hidden"
+                onClick={() => setMobileOpen((o) => !o)}
+                aria-label="Toggle menu"
+              >
+                {mobileOpen ? (
+                  <X className="size-5" />
+                ) : (
+                  <Menu className="size-5" />
+                )}
+              </Button>
+            </div>
+          </nav>
+        )}
+      </header>
+
+      {/* ── Mobile Drawer ── */}
+      {variant !== "dashboard" && renderMobileDrawer()}
+    </>
   );
 }
