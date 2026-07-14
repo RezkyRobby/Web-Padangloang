@@ -1,3 +1,4 @@
+import { hash } from "bcryptjs";
 import { Role, WisataKategori } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
@@ -184,6 +185,7 @@ async function main() {
   console.log(`✅ Category: 3 kategori`);
 
   // --- ADMIN USER ---
+  const passwordHash = await hash("admin123", 10);
   const adminUser = await prisma.user.upsert({
     where: { email: "admin@padangloang.desa.id" },
     update: {},
@@ -195,7 +197,48 @@ async function main() {
       role: Role.ADMIN,
     },
   });
-  console.log(`✅ Admin: ${adminUser.email}`);
+
+  // Buat credential untuk login (password: admin123)
+  await prisma.account.upsert({
+    where: { id: "acc-admin-credential" },
+    update: { password: passwordHash },
+    create: {
+      id: "acc-admin-credential",
+      userId: adminUser.id,
+      accountId: adminUser.email,
+      providerId: "credential",
+      password: passwordHash,
+    },
+  });
+
+  // --- EDITOR USER ---
+  const editorHash = await hash("editor123", 10);
+  const editorUser = await prisma.user.upsert({
+    where: { email: "editor@padangloang.desa.id" },
+    update: {},
+    create: {
+      id: "editor-utama",
+      name: "Editor Desa Padangloang",
+      email: "editor@padangloang.desa.id",
+      emailVerified: true,
+      role: Role.EDITOR,
+    },
+  });
+
+  await prisma.account.upsert({
+    where: { id: "acc-editor-credential" },
+    update: { password: editorHash },
+    create: {
+      id: "acc-editor-credential",
+      userId: editorUser.id,
+      accountId: editorUser.email,
+      providerId: "credential",
+      password: editorHash,
+    },
+  });
+
+  console.log(`✅ Admin: ${adminUser.email} / admin123`);
+  console.log(`✅ Editor: ${editorUser.email} / editor123`);
 
   console.log("🎉 Seeding selesai!");
 }
