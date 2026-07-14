@@ -426,7 +426,7 @@ export async function POST(req: NextRequest) {
 - [x] 8a. Beranda: Hero section + statistik desa
 - [x] 8b. Beranda: Featured UMKM + Wisata terbaru
 - [x] 8c. Beranda: Galeri foto grid + pengumuman desa (breaking news)
-- [ ] 9. Modifikasi halaman profil dengan data Desa
+- [x] 9. Modifikasi halaman profil dengan data Desa
 - [ ] 10. Modifikasi halaman visi-misi dari program-satuan
 - [ ] 11. Buat halaman UMKM + detail
 - [ ] 12. Buat halaman Wisata + detail
