@@ -1,6 +1,24 @@
-import { hash } from "bcryptjs";
+import { scryptAsync } from "@noble/hashes/scrypt.js";
 import { Role, WisataKategori } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+
+function toHex(bytes: Uint8Array): string {
+  return Buffer.from(bytes).toString("hex");
+}
+
+/** Hash password dengan format yang sama dengan Better-Auth: salt:scryptHash */
+async function hashBetterAuth(password: string): Promise<string> {
+  const saltBytes = crypto.getRandomValues(new Uint8Array(16));
+  const salt = toHex(saltBytes);
+  const key = await scryptAsync(password.normalize("NFKC"), saltBytes, {
+    N: 16384,
+    r: 16,
+    p: 1,
+    dkLen: 64,
+    maxmem: 128 * 16384 * 16 * 2,
+  });
+  return `${salt}:${toHex(key)}`;
+}
 
 async function main() {
   console.log("🌱 Seeding database...");
@@ -185,7 +203,7 @@ async function main() {
   console.log(`✅ Category: 3 kategori`);
 
   // --- ADMIN USER ---
-  const passwordHash = await hash("admin123", 10);
+  const passwordHash = await hashBetterAuth("admin123");
   const adminUser = await prisma.user.upsert({
     where: { email: "admin@padangloang.desa.id" },
     update: {},
@@ -212,7 +230,7 @@ async function main() {
   });
 
   // --- EDITOR USER ---
-  const editorHash = await hash("editor123", 10);
+  const editorHash = await hashBetterAuth("editor123");
   const editorUser = await prisma.user.upsert({
     where: { email: "editor@padangloang.desa.id" },
     update: {},
