@@ -428,7 +428,7 @@ export async function POST(req: NextRequest) {
 - [x] 8c. Beranda: Galeri foto grid + pengumuman desa (breaking news)
 - [x] 9. Modifikasi halaman profil dengan data Desa
 - [x] 10. Modifikasi halaman visi-misi dari program-satuan
-- [ ] 11. Buat halaman UMKM + detail (placeholder siap)
+- [x] 11. Buat halaman UMKM + detail
 - [ ] 12. Buat halaman Wisata + detail (placeholder siap)
 - [ ] 13. Buat halaman Galeri + lightbox (placeholder siap)
 - [ ] 14. Buat halaman Infografis + IDM (placeholder siap)
