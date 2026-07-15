@@ -429,7 +429,7 @@ export async function POST(req: NextRequest) {
 - [x] 9. Modifikasi halaman profil dengan data Desa
 - [x] 10. Modifikasi halaman visi-misi dari program-satuan
 - [x] 11. Buat halaman UMKM + detail
-- [ ] 12. Buat halaman Wisata + detail (placeholder siap)
+- [x] 12. Buat halaman Wisata + detail (placeholder siap)
 - [ ] 13. Buat halaman Galeri + lightbox (placeholder siap)
 - [ ] 14. Buat halaman Infografis + IDM (placeholder siap)
 - [x] 15. Modifikasi halaman kontak + Google Maps
