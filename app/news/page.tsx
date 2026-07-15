@@ -2,6 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import Navbar from "@/components/custom/navbar";
+import Footer from "@/components/custom/footer";
 import { CategoryBadge } from "@/components/custom/category-badge";
 import type { NewsCardPost } from "@/components/custom/news-card";
 
@@ -81,6 +83,8 @@ export default async function NewsPage({ searchParams }: PageProps) {
   ]);
 
   return (
+    <>
+    <Navbar variant="public" />
     <main className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#282834] via-[#1e1e28] to-[#282834] pt-24 md:pt-28">
@@ -266,5 +270,7 @@ export default async function NewsPage({ searchParams }: PageProps) {
         )}
       </section>
     </main>
+    <Footer />
+    </>
   );
 }

@@ -6,11 +6,17 @@ function toHex(bytes: Uint8Array): string {
   return Buffer.from(bytes).toString("hex");
 }
 
+function fromHex(hex: string): Uint8Array {
+  return Buffer.from(hex, "hex");
+}
+
 /** Hash password dengan format yang sama dengan Better-Auth: salt:scryptHash */
 async function hashBetterAuth(password: string): Promise<string> {
-  const saltBytes = crypto.getRandomValues(new Uint8Array(16));
-  const salt = toHex(saltBytes);
-  const key = await scryptAsync(password.normalize("NFKC"), saltBytes, {
+  // Better-Auth meng-encode salt ke hex string (bukan raw bytes),
+  // lalu salt hex string tsb.yang dilempar ke scryptAsync
+  const rawSalt = crypto.getRandomValues(new Uint8Array(16));
+  const salt = toHex(rawSalt); // hex string — persis seperti Better-Auth
+  const key = await scryptAsync(password.normalize("NFKC"), salt, {
     N: 16384,
     r: 16,
     p: 1,
