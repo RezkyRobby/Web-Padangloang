@@ -19,7 +19,7 @@ export function UMKMCard({ id, namaProduk, harga, kategori, gambar, pemilik }: U
   return (
     <Link
       href={`/umkm/${id}`}
-      className="group block overflow-hidden rounded-xl border border-sage bg-paper transition hover:border-iron/30 dark:border-[#414943] dark:bg-[#1a1a1a] dark:hover:border-white/30"
+      className="group block overflow-hidden rounded-[12px] border border-sage bg-paper shadow-paper-sm transition hover:border-iron/30 dark:border-[#414943] dark:bg-[#1a1a1a] dark:hover:border-white/30"
     >
       {/* Gambar */}
       <div className="relative aspect-[4/3] overflow-hidden bg-fog dark:bg-[#2a2a2a]">
@@ -37,7 +37,7 @@ export function UMKMCard({ id, namaProduk, harga, kategori, gambar, pemilik }: U
           </div>
         )}
         {/* Badge kategori */}
-        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold text-obsidian shadow-xs backdrop-blur-sm dark:bg-black/60 dark:text-white">
+        <span className="absolute left-3 top-3 rounded-xs bg-white/90 px-3 py-1 text-[11px] font-semibold text-obsidian shadow-xs backdrop-blur-sm dark:bg-black/60 dark:text-white">
           {kategori}
         </span>
       </div>
