@@ -431,7 +431,7 @@ export async function POST(req: NextRequest) {
 - [x] 11. Buat halaman UMKM + detail
 - [x] 12. Buat halaman Wisata + detail (placeholder siap)
 - [x] 13. Buat halaman Galeri + lightbox
-- [ ] 14. Buat halaman Infografis + IDM (placeholder siap)
+- [x] 14. Buat halaman Infografis + IDM (placeholder siap)
 - [x] 15. Modifikasi halaman kontak + Google Maps
 
 ### Fase 3 — Admin & CRUD (Hari 10–12)
