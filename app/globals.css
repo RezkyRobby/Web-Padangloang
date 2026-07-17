@@ -41,6 +41,19 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  /* DESIGN.md Named Colors — Stitch Natural Design System */
+  --color-paper: #ffffff;
+  --color-obsidian: #171717;
+  --color-graphite-night: #282834;
+  --color-linen: #f9faf7;
+  --color-sage: #dee2de;
+  --color-fog: #f1f3f1;
+  --color-ash: #e8ebe8;
+  --color-iron: #6b7280;
+  --color-steel: #9ca3af;
+  --color-carbon: #000000;
+  --color-mist: #e5e7eb;
+  --color-hudson-blue: #006496;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
