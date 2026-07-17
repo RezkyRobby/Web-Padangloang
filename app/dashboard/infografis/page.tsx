@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import {
   BarChart3,
@@ -17,6 +17,12 @@ import {
   AlertCircle,
   X,
   GripVertical,
+  Upload,
+  FileJson,
+  Sparkles,
+  CheckCircle2,
+  Eye,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -67,6 +73,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { cn } from "@/lib/utils";
 
 // ─── TYPES ──────────────────────────────────────────
 
@@ -98,12 +105,12 @@ const CHART_COLORS = [
 ] as const;
 
 const chartTypeIcons: Record<ChartType, React.ReactNode> = {
-  BAR_CHART: <BarChart3 className="h-4 w-4" />,
-  LINE_CHART: <TrendingUp className="h-4 w-4" />,
-  PIE_CHART: <PieChart className="h-4 w-4" />,
-  DOUGHNUT_CHART: <ChartNoAxesCombined className="h-4 w-4" />,
-  AREA_CHART: <AreaChart className="h-4 w-4" />,
-  STAT_CARDS: <LayoutGrid className="h-4 w-4" />,
+  BAR_CHART: <BarChart3 className="h-5 w-5" />,
+  LINE_CHART: <TrendingUp className="h-5 w-5" />,
+  PIE_CHART: <PieChart className="h-5 w-5" />,
+  DOUGHNUT_CHART: <ChartNoAxesCombined className="h-5 w-5" />,
+  AREA_CHART: <AreaChart className="h-5 w-5" />,
+  STAT_CARDS: <LayoutGrid className="h-5 w-5" />,
 };
 
 const chartTypeBadgeColors: Record<ChartType, string> = {
@@ -119,6 +126,15 @@ const chartTypeBadgeColors: Record<ChartType, string> = {
     "bg-[#ede7f6] text-[#4527a0] dark:bg-[#4527a0] dark:text-[#ede7f6]",
   STAT_CARDS:
     "bg-[#f1f3f1] text-[#6b7280] dark:bg-[#2e2e2e] dark:text-[#c2c8bd]",
+};
+
+const chartTypeDescriptions: Record<ChartType, string> = {
+  BAR_CHART: "Cocok untuk perbandingan data antar kategori",
+  LINE_CHART: "Cocok untuk menampilkan tren dari waktu ke waktu",
+  PIE_CHART: "Cocok untuk menampilkan proporsi atau persentase",
+  DOUGHNUT_CHART: "Seperti pie chart dengan ruang tengah untuk info tambahan",
+  AREA_CHART: "Cocok untuk volume atau akumulasi data",
+  STAT_CARDS: "Tampilan kartu statistik sederhana tanpa grafik",
 };
 
 // ─── CHART PREVIEW ──────────────────────────────────
@@ -137,7 +153,7 @@ function ChartPreview({
   if (chartData.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-[200px] text-iron">
-        <BarChart3 className="h-10 w-10 mb-2 text-steel" />
+        <BarChart3 className="h-10 w-10 mb-2 text-steel animate-bounce" />
         <p className="text-sm">Tambahkan data untuk melihat preview</p>
       </div>
     );
@@ -149,9 +165,10 @@ function ChartPreview({
         {chartData.map((item, i) => (
           <div
             key={i}
-            className="bg-fog dark:bg-[#2e2e2e] rounded-[8px] p-3 text-center border border-sage dark:border-[#414943]"
+            className="bg-fog dark:bg-[#2e2e2e] rounded-lg p-3 text-center border border-sage dark:border-[#414943] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+            style={{ animationDelay: `${i * 80}ms` }}
           >
-            <p className="text-lg font-bold text-obsidian dark:text-white">
+            <p className="text-lg font-bold text-obsidian dark:text-white animate-in fade-in slide-in-from-top-2 duration-300">
               {item.value.toLocaleString("id-ID")}
             </p>
             <p className="text-xs text-iron dark:text-[#c2c8bd] mt-1">
@@ -164,7 +181,7 @@ function ChartPreview({
   }
 
   return (
-    <div className="h-[250px] w-full">
+    <div className="h-[250px] w-full animate-in fade-in duration-500">
       <ResponsiveContainer width="100%" height="100%">
         {chartType === "BAR_CHART" ? (
           <BarChart data={chartData}>
@@ -176,7 +193,7 @@ function ChartPreview({
               dataKey="value"
               fill={CHART_COLORS[1]}
               radius={[4, 4, 0, 0]}
-              animationDuration={1000}
+              animationDuration={1200}
               animationEasing="ease-out"
             />
           </BarChart>
@@ -192,7 +209,7 @@ function ChartPreview({
               stroke={CHART_COLORS[1]}
               strokeWidth={2}
               dot={{ r: 4 }}
-              animationDuration={1000}
+              animationDuration={1200}
               animationEasing="ease-out"
             />
           </LineChart>
@@ -208,7 +225,7 @@ function ChartPreview({
               label={({ name, percent }) =>
                 `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
               }
-              animationDuration={1000}
+              animationDuration={1200}
               animationEasing="ease-out"
             >
               {chartData.map((_, i) => (
@@ -233,7 +250,7 @@ function ChartPreview({
               label={({ name, percent }) =>
                 `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
               }
-              animationDuration={1000}
+              animationDuration={1200}
               animationEasing="ease-out"
             >
               {chartData.map((_, i) => (
@@ -257,7 +274,7 @@ function ChartPreview({
               stroke={CHART_COLORS[1]}
               fill={CHART_COLORS[1]}
               fillOpacity={0.2}
-              animationDuration={1000}
+              animationDuration={1200}
               animationEasing="ease-out"
             />
           </ReAreaChart>
@@ -268,6 +285,51 @@ function ChartPreview({
         )}
       </ResponsiveContainer>
     </div>
+  );
+}
+
+// ─── CHART TYPE SELECTOR CARD ───────────────────────
+
+function ChartTypeCard({
+  type,
+  selected,
+  onClick,
+}: {
+  type: ChartType;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer",
+        "hover:shadow-md hover:-translate-y-1 active:scale-95",
+        selected
+          ? "border-hudson-blue bg-[#cae6ff]/30 dark:bg-[#004a73]/20 shadow-md"
+          : "border-sage dark:border-[#414943] bg-paper dark:bg-[#1a1a1a] hover:border-hudson-blue/50"
+      )}
+    >
+      {selected && (
+        <div className="absolute -top-2 -right-2 bg-hudson-blue text-white rounded-full p-0.5 animate-in zoom-in duration-200">
+          <CheckCircle2 className="h-4 w-4" />
+        </div>
+      )}
+      <div
+        className={cn(
+          "p-2.5 rounded-lg transition-colors duration-300",
+          selected
+            ? "bg-hudson-blue text-white"
+            : "bg-fog dark:bg-[#2e2e2e] text-obsidian dark:text-white"
+        )}
+      >
+        {chartTypeIcons[type]}
+      </div>
+      <span className="text-xs font-semibold text-obsidian dark:text-white text-center">
+        {CHART_TYPE_LABELS[type]}
+      </span>
+    </button>
   );
 }
 
@@ -292,8 +354,8 @@ function KeyValueRowInput({
 }) {
   return (
     <div
-      className="flex items-center gap-3 animate-in slide-in-from-top-2 fade-in duration-200"
-      style={{ animationDelay: `${index * 30}ms` }}
+      className="flex items-center gap-3 animate-in slide-in-from-left-2 fade-in duration-300"
+      style={{ animationDelay: `${index * 50}ms` }}
     >
       <GripVertical className="h-4 w-4 text-steel shrink-0" />
       <div className="flex-1">
@@ -301,7 +363,7 @@ function KeyValueRowInput({
           placeholder="Label (misal: Petani)"
           value={row.label}
           onChange={(e) => onChange(row.id, "label", e.target.value)}
-          className="h-10 rounded-xs border-mist dark:border-[#414943]"
+          className="h-10 rounded-lg border-mist dark:border-[#414943] focus:border-hudson-blue transition-colors duration-200"
         />
       </div>
       <div className="w-32">
@@ -316,7 +378,7 @@ function KeyValueRowInput({
               e.target.value === "" ? 0 : Number(e.target.value)
             )
           }
-          className="h-10 rounded-xs border-mist dark:border-[#414943]"
+          className="h-10 rounded-lg border-mist dark:border-[#414943] focus:border-hudson-blue transition-colors duration-200"
         />
       </div>
       <Button
@@ -324,11 +386,47 @@ function KeyValueRowInput({
         size="icon"
         onClick={() => onRemove(row.id)}
         disabled={!canDelete}
-        className="h-10 w-10 rounded-full hover:bg-[#ffdad6] dark:hover:bg-[#93000a] text-iron hover:text-red-500 transition-colors duration-200 shrink-0"
+        className="h-10 w-10 rounded-full hover:bg-[#ffdad6] dark:hover:bg-[#93000a] text-iron hover:text-red-500 transition-all duration-200 shrink-0 group"
       >
-        <X className="h-4 w-4" />
+        <X className="h-4 w-4 group-hover:scale-110 transition-transform" />
       </Button>
     </div>
+  );
+}
+
+// ─── CONFETTI PARTICLES ─────────────────────────────
+
+const CONFETTI_COLORS = [
+  "#006496",
+  "#2D6A4F",
+  "#f59e0b",
+  "#8b5cf6",
+  "#ec4899",
+  "#ef4444",
+];
+
+function ConfettiParticle({ index }: { index: number }) {
+  const color = CONFETTI_COLORS[index % CONFETTI_COLORS.length];
+  // Use deterministic pseudo-random values based on index to avoid impure Math.random() during render
+  const left = 20 + ((index * 17) % 60);
+  const delay = ((index * 13) % 100) / 100 * 0.6;
+  const size = 6 + ((index * 7) % 8);
+  const rotation = ((index * 23) % 720);
+  const duration = 1.5 + ((index * 11) % 150) / 100;
+
+  return (
+    <div
+      className="fixed top-0 z-[100] pointer-events-none"
+      style={{
+        left: `${left}%`,
+        width: `${size}px`,
+        height: `${size * 0.6}px`,
+        background: color,
+        borderRadius: "2px",
+        animation: `confetti-fall ${duration}s ease-out ${delay}s both`,
+        transform: `rotate(${rotation}deg)`,
+      }}
+    />
   );
 }
 
@@ -363,6 +461,16 @@ export default function DashboardInfografisPage() {
     null
   );
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Celebration state
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  // File import state
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Preview state
+  const [showPreview, setShowPreview] = useState(false);
 
   // ─── Fetch Data ───────────────────────────────────
   const fetchData = useCallback(async () => {
@@ -406,6 +514,7 @@ export default function DashboardInfografisPage() {
     setFormTahun(new Date().getFullYear());
     setFormChartType("BAR_CHART");
     setFormDataRows([{ id: crypto.randomUUID(), label: "", value: 0 }]);
+    setShowPreview(false);
     setIsFormOpen(true);
   };
 
@@ -423,6 +532,7 @@ export default function DashboardInfografisPage() {
         })
       )
     );
+    setShowPreview(true);
     setIsFormOpen(true);
   };
 
@@ -448,17 +558,304 @@ export default function DashboardInfografisPage() {
     setFormDataRows((prev) => prev.filter((row) => row.id !== id));
   };
 
+  // ─── File Import ──────────────────────────────────
+  const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      try {
+        if (file.name.endsWith(".json")) {
+          const json = JSON.parse(text);
+          // Expect format: { "Label": value, ... }
+          const rows: KeyValueRow[] = Object.entries(json).map(
+            ([label, value]) => ({
+              id: crypto.randomUUID(),
+              label,
+              value: Number(value) || 0,
+            })
+          );
+          if (rows.length === 0) throw new Error("Data kosong");
+          setFormDataRows(rows);
+          toast.success(`${rows.length} data berhasil diimpor`, {
+            description: `Dari file: ${file.name}`,
+            duration: 3000,
+          });
+        } else if (file.name.endsWith(".csv")) {
+          const lines = text.split("\n").filter((l) => l.trim());
+          const rows: KeyValueRow[] = [];
+          for (const line of lines) {
+            const [label, valueStr] = line.split(",").map((s) => s.trim());
+            if (label && valueStr) {
+              rows.push({
+                id: crypto.randomUUID(),
+                label,
+                value: Number(valueStr) || 0,
+              });
+            }
+          }
+          if (rows.length === 0) throw new Error("Data kosong");
+          setFormDataRows(rows);
+          toast.success(`${rows.length} data berhasil diimpor`, {
+            description: `Dari file: ${file.name}`,
+            duration: 3000,
+          });
+        }
+      } catch {
+        toast.error("Format file tidak valid", {
+          description: "Gunakan JSON atau CSV dengan format yang benar",
+          duration: 4000,
+        });
+      }
+    };
+    reader.readAsText(file);
+
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  // ─── Drag & Drop ──────────────────────────────────
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    const fakeEvent = {
+      target: { files: [file] },
+    } as unknown as React.ChangeEvent<HTMLInputElement>;
+    handleFileImport(fakeEvent);
+  };
+
+  // ─── Form Content Renderer ─────────────────────────
+  const renderFormContent = () => (
+    <form onSubmit={handleSubmit}>
+      <DialogHeader>
+        <DialogTitle className="font-display text-headline-small text-obsidian dark:text-white">
+          {editingItem ? "Edit Infografis" : "Tambah Infografis Baru"}
+        </DialogTitle>
+        <DialogDescription className="text-body-medium text-iron dark:text-[#c2c8bd]">
+          {editingItem
+            ? "Ubah judul, tahun, jenis chart, dan data."
+            : "Isi data yang akan divisualisasikan di halaman publik."}
+        </DialogDescription>
+      </DialogHeader>
+
+      <div className="space-y-6 mt-6">
+        {/* Judul + Tahun */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-obsidian dark:text-white">
+              Judul Infografis
+            </label>
+            <Input
+              placeholder="Contoh: Mata Pencaharian Penduduk"
+              value={formJudul}
+              onChange={(e) => setFormJudul(e.target.value)}
+              className="h-10 rounded-lg border-sage dark:border-[#414943] focus:border-hudson-blue transition-colors duration-200"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-obsidian dark:text-white">
+              Tahun
+            </label>
+            <Input
+              type="number"
+              placeholder={String(new Date().getFullYear())}
+              value={formTahun || ""}
+              onChange={(e) =>
+                setFormTahun(
+                  e.target.value === "" ? 0 : Number(e.target.value)
+                )
+              }
+              className="h-10 rounded-lg border-sage dark:border-[#414943] focus:border-hudson-blue transition-colors duration-200"
+            />
+          </div>
+        </div>
+
+        {/* Chart Type Selector */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-obsidian dark:text-white">
+            Jenis Chart
+          </label>
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+            {(Object.keys(CHART_TYPE_LABELS) as ChartType[]).map((type) => (
+              <ChartTypeCard
+                key={type}
+                type={type}
+                selected={formChartType === type}
+                onClick={() => setFormChartType(type)}
+              />
+            ))}
+          </div>
+          <p className="text-xs text-iron dark:text-[#c2c8bd] mt-1">
+            {chartTypeDescriptions[formChartType]}
+          </p>
+        </div>
+
+        {/* Data Rows */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-semibold text-obsidian dark:text-white">
+              Data Points
+            </label>
+            <div className="flex items-center gap-2">
+              {/* File Import Button */}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                className="h-8 px-3 rounded-lg border-dashed border-hudson-blue/50 text-hudson-blue hover:bg-[#cae6ff]/20 text-xs font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
+              >
+                <Upload className="h-3.5 w-3.5 mr-1.5" />
+                Import
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json,.csv"
+                onChange={handleFileImport}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addDataRow}
+                className="h-8 px-3 rounded-lg border-sage dark:border-[#414943] text-obsidian dark:text-white text-xs font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
+              >
+                <Plus className="h-3.5 w-3.5 mr-1.5" />
+                Tambah Baris
+              </Button>
+            </div>
+          </div>
+
+          {/* Drag & Drop Area */}
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={cn(
+              "border-2 border-dashed rounded-xl p-4 transition-all duration-300",
+              isDragging
+                ? "border-hudson-blue bg-[#cae6ff]/20 scale-[1.02] shadow-md"
+                : "border-sage dark:border-[#414943]"
+            )}
+          >
+            {isDragging ? (
+              <div className="flex flex-col items-center gap-2 py-8 animate-in zoom-in duration-200">
+                <div className="bg-hudson-blue text-white rounded-full p-3 animate-bounce">
+                  <FileJson className="h-6 w-6" />
+                </div>
+                <p className="text-sm font-semibold text-hudson-blue">
+                  Lepaskan file JSON/CSV di sini
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {formDataRows.map((row, i) => (
+                  <KeyValueRowInput
+                    key={row.id}
+                    row={row}
+                    onChange={updateDataRow}
+                    onRemove={removeDataRow}
+                    canDelete={formDataRows.length > 1}
+                    index={i}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Toggle Preview */}
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setShowPreview(!showPreview)}
+            className="w-full h-9 rounded-lg text-steel hover:text-hudson-blue hover:bg-[#cae6ff]/20 text-xs font-semibold transition-all duration-200"
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            {showPreview ? "Sembunyikan Preview" : "Lihat Preview Chart"}
+          </Button>
+
+          {/* Preview */}
+          {showPreview && (
+            <div className="border border-sage dark:border-[#414943] rounded-xl p-4 bg-fog dark:bg-[#2e2e2e] animate-in slide-in-from-top-2 fade-in duration-300">
+              <p className="text-xs font-semibold text-steel mb-3">
+                PREVIEW — {CHART_TYPE_LABELS[formChartType]}
+              </p>
+              <ChartPreview data={formDataRows} chartType={formChartType} />
+            </div>
+          )}
+        </div>
+      </div>
+
+      <DialogFooter className="mt-6 gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setIsFormOpen(false)}
+          className="h-10 px-5 rounded-lg border-sage dark:border-[#414943] text-iron dark:text-[#c2c8bd] hover:bg-linen dark:hover:bg-[#2e2e2e] font-semibold text-sm transition-all duration-200"
+        >
+          Batal
+        </Button>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="h-10 px-6 rounded-lg bg-obsidian text-white hover:bg-obsidian/90 font-semibold text-sm transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-60 disabled:hover:scale-100 shadow-md hover:shadow-lg"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Menyimpan...
+            </>
+          ) : editingItem ? (
+            "Simpan Perubahan"
+          ) : (
+            <>
+              <Sparkles className="h-4 w-4 mr-2" />
+              Tambah Infografis
+            </>
+          )}
+        </Button>
+      </DialogFooter>
+    </form>
+  );
+
+  // ─── Submit ────────────────────────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (formJudul.trim().length < 3) {
-      toast.error("Judul minimal 3 karakter", { duration: 3000 });
+      toast.error("Judul minimal 3 karakter", {
+        duration: 3000,
+        icon: "⚠️",
+      });
       return;
     }
 
     const validRows = formDataRows.filter((row) => row.label.trim() !== "");
     if (validRows.length === 0) {
-      toast.error("Minimal 1 data point harus diisi", { duration: 3000 });
+      toast.error("Minimal 1 data point harus diisi", {
+        duration: 3000,
+        icon: "⚠️",
+      });
       return;
     }
 
@@ -492,12 +889,21 @@ export default function DashboardInfografisPage() {
         throw new Error(errData.error || "Gagal menyimpan data");
       }
 
-      toast.success(
-        editingItem
-          ? "Infografis berhasil diperbarui"
-          : "Infografis baru berhasil ditambahkan",
-        { duration: 3000 }
-      );
+      // Show celebration for new items
+      if (!editingItem) {
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 3000);
+        toast.success("Infografis baru berhasil ditambahkan! 🎉", {
+          description: `"${formJudul.trim()}" siap ditampilkan di halaman publik`,
+          duration: 4000,
+          icon: <Sparkles className="h-4 w-4 text-amber-500" />,
+        });
+      } else {
+        toast.success("Infografis berhasil diperbarui", {
+          description: `"${formJudul.trim()}" telah diperbarui`,
+          duration: 3000,
+        });
+      }
 
       setIsFormOpen(false);
       fetchData();
@@ -505,7 +911,10 @@ export default function DashboardInfografisPage() {
       console.error(err);
       toast.error(
         err instanceof Error ? err.message : "Terjadi kesalahan",
-        { duration: 4000 }
+        {
+          duration: 4000,
+          icon: "❌",
+        }
       );
     } finally {
       setIsSubmitting(false);
@@ -524,6 +933,7 @@ export default function DashboardInfografisPage() {
       if (!res.ok) throw new Error("Gagal menghapus data");
 
       toast.success(`"${deleteTarget.judul}" berhasil dihapus`, {
+        description: "Data infografis telah dihapus permanen",
         duration: 3000,
       });
 
@@ -531,7 +941,10 @@ export default function DashboardInfografisPage() {
       fetchData();
     } catch (err) {
       console.error(err);
-      toast.error("Gagal menghapus data", { duration: 4000 });
+      toast.error("Gagal menghapus data", {
+        duration: 4000,
+        icon: "❌",
+      });
     } finally {
       setIsDeleting(false);
     }
@@ -551,9 +964,9 @@ export default function DashboardInfografisPage() {
         {[1, 2, 3, 4, 5].map((i) => (
           <div
             key={i}
-            className="flex items-center gap-4 p-4 bg-paper dark:bg-[#1a1a1a] border border-sage dark:border-[#414943] rounded-[12px]"
+            className="flex items-center gap-4 p-4 bg-paper dark:bg-[#1a1a1a] border border-sage dark:border-[#414943] rounded-xl"
           >
-            <Skeleton className="h-12 w-12 rounded-[8px]" />
+            <Skeleton className="h-12 w-12 rounded-lg" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-4 w-48" />
               <Skeleton className="h-3 w-24" />
@@ -571,7 +984,7 @@ export default function DashboardInfografisPage() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-20 animate-in fade-in duration-500">
-        <div className="bg-[#ffdad6] dark:bg-[#93000a] rounded-full p-6 mb-6">
+        <div className="bg-[#ffdad6] dark:bg-[#93000a] rounded-full p-6 mb-6 animate-in zoom-in duration-300">
           <AlertCircle className="h-12 w-12 text-red-500" />
         </div>
         <h3 className="font-display text-headline-small text-obsidian dark:text-white mb-2">
@@ -583,7 +996,7 @@ export default function DashboardInfografisPage() {
         <Button
           onClick={fetchData}
           variant="outline"
-          className="border-sage dark:border-[#414943] text-obsidian dark:text-white hover:bg-linen dark:hover:bg-[#2e2e2e] h-10 px-6 rounded-xs font-semibold text-sm"
+          className="border-sage dark:border-[#414943] text-obsidian dark:text-white hover:bg-linen dark:hover:bg-[#2e2e2e] h-10 px-6 rounded-lg font-semibold text-sm transition-all duration-200 hover:scale-105 active:scale-95"
         >
           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
           Coba Lagi
@@ -596,6 +1009,10 @@ export default function DashboardInfografisPage() {
   if (items.length === 0) {
     return (
       <>
+        {showConfetti &&
+          Array.from({ length: 30 }).map((_, i) => (
+            <ConfettiParticle key={i} index={i} />
+          ))}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h1 className="font-display text-headline-large text-obsidian dark:text-white">
@@ -607,7 +1024,7 @@ export default function DashboardInfografisPage() {
           </div>
         </div>
         <div className="flex flex-col items-center justify-center py-20 animate-in fade-in duration-500">
-          <div className="bg-fog dark:bg-[#2e2e2e] rounded-full p-6 mb-6">
+          <div className="bg-fog dark:bg-[#2e2e2e] rounded-full p-6 mb-6 animate-in zoom-in duration-300">
             <BarChart3 className="h-12 w-12 text-steel" />
           </div>
           <h3 className="font-display text-headline-small text-obsidian dark:text-white mb-2">
@@ -619,7 +1036,7 @@ export default function DashboardInfografisPage() {
           </p>
           <Button
             onClick={openCreateModal}
-            className="bg-obsidian text-white h-10 px-6 rounded-xs font-semibold text-sm hover:bg-obsidian/90 transition-colors duration-200"
+            className="bg-obsidian text-white h-10 px-6 rounded-lg font-semibold text-sm hover:bg-obsidian/90 transition-all duration-200 hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
           >
             <Plus className="h-4 w-4 mr-2" />
             Tambah Infografis
@@ -628,146 +1045,8 @@ export default function DashboardInfografisPage() {
 
         {/* Create Modal (for empty state) */}
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogContent className="sm:max-w-[640px] max-h-[90vh] overflow-y-auto rounded-[12px] border-sage dark:border-[#414943] bg-paper dark:bg-[#1a1a1a]">
-            <DialogHeader>
-              <DialogTitle className="font-display text-headline-small text-obsidian dark:text-white">
-                Tambah Infografis
-              </DialogTitle>
-              <DialogDescription className="text-body-medium text-iron dark:text-[#c2c8bd]">
-                Tambahkan data statistik baru dengan memilih jenis chart yang
-                sesuai
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-5 mt-4">
-              {/* Judul */}
-              <div className="space-y-2">
-              <label htmlFor="judul" className="text-sm font-semibold text-obsidian dark:text-white block">
-                  Judul Infografis
-                </label>
-                <Input
-                  id="judul"
-                  value={formJudul}
-                  onChange={(e) => setFormJudul(e.target.value)}
-                  placeholder="Contoh: Mata Pencaharian Penduduk"
-                  className="h-10 rounded-xs border-mist dark:border-[#414943]"
-                />
-              </div>
-
-              {/* Tahun + Chart Type */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="tahun" className="text-sm font-semibold text-obsidian dark:text-white block">
-                    Tahun
-                  </label>
-                  <Input
-                    id="tahun"
-                    type="number"
-                    value={formTahun}
-                    onChange={(e) => setFormTahun(Number(e.target.value))}
-                    className="h-10 rounded-xs border-mist dark:border-[#414943]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="chartType" className="text-sm font-semibold text-obsidian dark:text-white block">
-                    Jenis Chart
-                  </label>
-                  <Select
-                    value={formChartType}
-                    onValueChange={(val) =>
-                      setFormChartType(val as ChartType)
-                    }
-                  >
-                    <SelectTrigger
-                      id="chartType"
-                      className="h-10 rounded-xs border-mist dark:border-[#414943]"
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-[8px] border-sage dark:border-[#414943]">
-                      {(
-                        Object.entries(CHART_TYPE_LABELS) as [
-                          ChartType,
-                          string,
-                        ][]
-                      ).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>
-                          <div className="flex items-center gap-2">
-                            {chartTypeIcons[key]}
-                            {label}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Data Points */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-semibold text-obsidian dark:text-white block">
-                    Data Points
-                  </label>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={addDataRow}
-                    className="h-8 text-hudson-blue hover:text-hudson-blue/80 text-xs font-semibold"
-                  >
-                    <Plus className="h-3.5 w-3.5 mr-1" />
-                    Tambah Baris
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  {formDataRows.map((row, i) => (
-                    <KeyValueRowInput
-                      key={row.id}
-                      row={row}
-                      onChange={updateDataRow}
-                      onRemove={removeDataRow}
-                      canDelete={formDataRows.length > 1}
-                      index={i}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Preview */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-obsidian dark:text-white block">
-                  Preview Chart
-                </label>
-                <div className="bg-fog dark:bg-[#2e2e2e] rounded-[12px] p-4 border border-sage dark:border-[#414943]">
-                  <ChartPreview data={formDataRows} chartType={formChartType} />
-                </div>
-              </div>
-
-              <DialogFooter className="gap-2 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsFormOpen(false)}
-                  className="border-sage dark:border-[#414943] text-obsidian dark:text-white rounded-xs"
-                >
-                  Batal
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-obsidian text-white rounded-xs hover:bg-obsidian/90"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Menyimpan...
-                    </>
-                  ) : (
-                    "Simpan Infografis"
-                  )}
-                </Button>
-              </DialogFooter>
-            </form>
+          <DialogContent className="sm:max-w-[720px] max-h-[92vh] overflow-y-auto rounded-2xl border-sage dark:border-[#414943] bg-paper dark:bg-[#1a1a1a]">
+            {renderFormContent()}
           </DialogContent>
         </Dialog>
       </>
@@ -777,6 +1056,10 @@ export default function DashboardInfografisPage() {
   // ─── Render: Data List ────────────────────────────
   return (
     <>
+      {showConfetti &&
+        Array.from({ length: 30 }).map((_, i) => (
+          <ConfettiParticle key={i} index={i} />
+        ))}
       <div className="space-y-6 animate-in fade-in duration-300">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -790,7 +1073,7 @@ export default function DashboardInfografisPage() {
           </div>
           <Button
             onClick={openCreateModal}
-            className="bg-obsidian text-white h-10 px-6 rounded-xs font-semibold text-sm hover:bg-obsidian/90 transition-colors duration-200"
+            className="bg-obsidian text-white h-10 px-6 rounded-lg font-semibold text-sm hover:bg-obsidian/90 transition-all duration-200 hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
           >
             <Plus className="h-4 w-4 mr-2" />
             Tambah Infografis
@@ -798,27 +1081,30 @@ export default function DashboardInfografisPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 animate-in slide-in-from-top-2 fade-in duration-300">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-steel" />
             <Input
-              placeholder="Cari berdasarkan judul..."
+              placeholder="Cari infografis..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 rounded-xs border-mist dark:border-[#414943] bg-paper dark:bg-[#1a1a1a] text-sm"
+              className="pl-10 h-10 rounded-lg border-sage dark:border-[#414943] focus:border-hudson-blue transition-colors duration-200"
             />
           </div>
           <Select
             value={selectedTahun}
-            onValueChange={(val) =>
-              setSelectedTahun(val === "all" ? "" : val)
-            }
+            onValueChange={setSelectedTahun}
           >
-            <SelectTrigger className="w-[160px] h-10 rounded-xs border-mist dark:border-[#414943] bg-paper dark:bg-[#1a1a1a] text-sm">
-              <SelectValue placeholder="Semua Tahun" />
+            <SelectTrigger className="w-full sm:w-44 h-10 rounded-lg border-sage dark:border-[#414943]">
+              <SelectValue placeholder="Semua Tahun">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Semua Tahun
+                </div>
+              </SelectValue>
             </SelectTrigger>
-            <SelectContent className="rounded-[8px] border-sage dark:border-[#414943]">
-              <SelectItem value="all">Semua Tahun</SelectItem>
+            <SelectContent className="rounded-lg border-sage dark:border-[#414943]">
+              <SelectItem value="">Semua Tahun</SelectItem>
               {availableTahuns.map((tahun) => (
                 <SelectItem key={tahun} value={String(tahun)}>
                   {tahun}
@@ -826,65 +1112,60 @@ export default function DashboardInfografisPage() {
               ))}
             </SelectContent>
           </Select>
-          {items.length > 0 && (
-            <p className="text-xs text-steel ml-auto">
-              {filteredItems.length} dari {items.length} data
+          {filteredItems.length > 0 && (
+            <p className="text-sm text-iron dark:text-[#c2c8bd] self-center">
+              {filteredItems.length} dari {items.length} infografis
             </p>
           )}
         </div>
 
-        {/* No Search Results */}
+        {/* Items List */}
         {filteredItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 animate-in fade-in duration-300">
-            <Search className="h-10 w-10 text-steel mb-4" />
+            <Search className="h-10 w-10 text-steel mb-3" />
             <p className="text-body-medium text-iron dark:text-[#c2c8bd]">
-              Tidak ada hasil untuk pencarian ini
+              Tidak ada infografis yang cocok
             </p>
           </div>
         ) : (
-          /* Data Items */
           <div className="space-y-3">
-            {filteredItems.map((item, index) => (
+            {filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 bg-paper dark:bg-[#1a1a1a] border border-sage dark:border-[#414943] rounded-[12px] shadow-sm hover:shadow-md transition-all duration-200 animate-in slide-in-from-bottom-2 fade-in"
-                style={{ animationDelay: `${index * 40}ms` }}
+                className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 bg-paper dark:bg-[#1a1a1a] border border-sage dark:border-[#414943] rounded-xl hover:shadow-md hover:border-hudson-blue/30 transition-all duration-300 group animate-in fade-in slide-in-from-top-2"
               >
-                {/* Icon + Info */}
+                {/* Icon by chart type */}
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="bg-fog dark:bg-[#2e2e2e] rounded-[8px] p-3 shrink-0">
-                    <span className="text-obsidian dark:text-white">
-                      {chartTypeIcons[item.chartType]}
-                    </span>
+                  <div className="shrink-0 p-2.5 rounded-lg bg-fog dark:bg-[#2e2e2e] text-hudson-blue group-hover:bg-[#cae6ff]/30 transition-colors duration-300">
+                    {chartTypeIcons[item.chartType]}
                   </div>
                   <div className="min-w-0">
                     <h3 className="font-semibold text-sm text-obsidian dark:text-white truncate">
                       {item.judul}
                     </h3>
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <Badge
-                        variant="secondary"
-                        className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${chartTypeBadgeColors[item.chartType]}`}
-                      >
-                        {CHART_TYPE_LABELS[item.chartType]}
-                      </Badge>
-                      <span className="text-xs text-iron dark:text-[#c2c8bd]">
-                        {item.tahun}
-                      </span>
-                      <span className="text-xs text-steel">
-                        {Object.keys(item.dataJson as Record<string, unknown>).length} data point
-                      </span>
-                    </div>
+                    <p className="text-xs text-steel mt-0.5">
+                      {item.tahun} ·{" "}
+                      {Object.keys(item.dataJson as Record<string, number>).length}{" "}
+                      data points
+                    </p>
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-1 shrink-0">
+                <div className="flex items-center gap-2 sm:gap-3 ml-10 sm:ml-0">
+                  <Badge
+                    variant="secondary"
+                    className={cn(
+                      "text-[11px] font-semibold px-2.5 py-0.5",
+                      chartTypeBadgeColors[item.chartType]
+                    )}
+                  >
+                    {CHART_TYPE_LABELS[item.chartType]}
+                  </Badge>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => openEditModal(item)}
-                    className="h-9 w-9 rounded-full hover:bg-[#cae6ff] dark:hover:bg-[#004a73] text-hudson-blue transition-colors"
+                    className="h-9 w-9 rounded-full hover:bg-fog dark:hover:bg-[#2e2e2e] text-iron hover:text-hudson-blue transition-all duration-200 hover:scale-110 active:scale-90"
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
@@ -892,7 +1173,7 @@ export default function DashboardInfografisPage() {
                     variant="ghost"
                     size="icon"
                     onClick={() => setDeleteTarget(item)}
-                    className="h-9 w-9 rounded-full hover:bg-[#ffdad6] dark:hover:bg-[#93000a] text-iron hover:text-red-500 transition-colors"
+                    className="h-9 w-9 rounded-full hover:bg-[#ffdad6] dark:hover:bg-[#93000a] text-iron hover:text-red-500 transition-all duration-200 hover:scale-110 active:scale-90"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -901,198 +1182,58 @@ export default function DashboardInfografisPage() {
             ))}
           </div>
         )}
-      </div>
 
-      {/* Create / Edit Modal */}
-      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="sm:max-w-[640px] max-h-[90vh] overflow-y-auto rounded-[12px] border-sage dark:border-[#414943] bg-paper dark:bg-[#1a1a1a]">
-          <DialogHeader>
-            <DialogTitle className="font-display text-headline-small text-obsidian dark:text-white">
-              {editingItem ? "Edit Infografis" : "Tambah Infografis"}
-            </DialogTitle>
-            <DialogDescription className="text-body-medium text-iron dark:text-[#c2c8bd]">
-              {editingItem
-                ? "Ubah data statistik dan jenis chart"
-                : "Tambahkan data statistik baru dengan memilih jenis chart yang sesuai"}
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-5 mt-4">
-            {/* Judul */}
-            <div className="space-y-2">
-              <label htmlFor="judul" className="text-sm font-semibold text-obsidian dark:text-white block">
-                Judul Infografis
-              </label>
-              <Input
-                id="judul"
-                value={formJudul}
-                onChange={(e) => setFormJudul(e.target.value)}
-                placeholder="Contoh: Mata Pencaharian Penduduk"
-                className="h-10 rounded-xs border-mist dark:border-[#414943]"
-              />
-            </div>
+        {/* Create/Edit Modal */}
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <DialogContent className="sm:max-w-[720px] max-h-[92vh] overflow-y-auto rounded-2xl border-sage dark:border-[#414943] bg-paper dark:bg-[#1a1a1a]">
+            {renderFormContent()}
+          </DialogContent>
+        </Dialog>
 
-            {/* Tahun + Chart Type */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="tahun" className="text-sm font-semibold text-obsidian dark:text-white block">
-                  Tahun
-                </label>
-                <Input
-                  id="tahun"
-                  type="number"
-                  value={formTahun}
-                  onChange={(e) => setFormTahun(Number(e.target.value))}
-                  className="h-10 rounded-xs border-mist dark:border-[#414943]"
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="chartType" className="text-sm font-semibold text-obsidian dark:text-white block">
-                  Jenis Chart
-                </label>
-                <Select
-                  value={formChartType}
-                  onValueChange={(val) =>
-                    setFormChartType(val as ChartType)
-                  }
-                >
-                  <SelectTrigger
-                    id="chartType"
-                    className="h-10 rounded-xs border-mist dark:border-[#414943]"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-[8px] border-sage dark:border-[#414943]">
-                    {(
-                      Object.entries(CHART_TYPE_LABELS) as [
-                        ChartType,
-                        string,
-                      ][]
-                    ).map(([key, label]) => (
-                      <SelectItem key={key} value={key}>
-                        <div className="flex items-center gap-2">
-                          {chartTypeIcons[key]}
-                          {label}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Data Points */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-obsidian dark:text-white">
-                  Data Points
-                </label>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={addDataRow}
-                  className="h-8 text-hudson-blue hover:text-hudson-blue/80 text-xs font-semibold"
-                >
-                  <Plus className="h-3.5 w-3.5 mr-1" />
-                  Tambah Baris
-                </Button>
-              </div>
-              <div className="space-y-2">
-                {formDataRows.map((row, i) => (
-                  <KeyValueRowInput
-                    key={row.id}
-                    row={row}
-                    onChange={updateDataRow}
-                    onRemove={removeDataRow}
-                    canDelete={formDataRows.length > 1}
-                    index={i}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Preview */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-obsidian dark:text-white block">
-                Preview Chart
-              </label>
-              <div className="bg-fog dark:bg-[#2e2e2e] rounded-[12px] p-4 border border-sage dark:border-[#414943]">
-                <ChartPreview data={formDataRows} chartType={formChartType} />
-              </div>
-            </div>
-
-            <DialogFooter className="gap-2 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsFormOpen(false)}
-                className="border-sage dark:border-[#414943] text-obsidian dark:text-white rounded-xs"
+        {/* Delete Confirmation */}
+        <AlertDialog
+          open={!!deleteTarget}
+          onOpenChange={(open) => !open && setDeleteTarget(null)}
+        >
+          <AlertDialogContent className="rounded-2xl border-sage dark:border-[#414943] bg-paper dark:bg-[#1a1a1a]">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="font-display text-headline-small text-obsidian dark:text-white">
+                Hapus Infografis?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-body-medium text-iron dark:text-[#c2c8bd]">
+                Data{" "}
+                <span className="font-semibold text-obsidian dark:text-white">
+                  &ldquo;{deleteTarget?.judul}&rdquo;
+                </span>{" "}
+                akan dihapus permanen dan tidak dapat dikembalikan. Halaman
+                publik yang menampilkan infografis ini akan kehilangan data.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="gap-3">
+              <AlertDialogCancel
+                disabled={isDeleting}
+                className="h-10 px-5 rounded-lg border-sage dark:border-[#414943] text-iron dark:text-[#c2c8bd] hover:bg-linen dark:hover:bg-[#2e2e2e] font-semibold text-sm transition-all duration-200"
               >
                 Batal
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-obsidian text-white rounded-xs hover:bg-obsidian/90"
+              </AlertDialogCancel>
+              <AlertDialogAction
+                disabled={isDeleting}
+                onClick={handleDelete}
+                className="h-10 px-5 rounded-lg bg-[#ba1a1a] text-white hover:bg-[#93000a] font-semibold text-sm transition-all duration-200 active:scale-95"
               >
-                {isSubmitting ? (
+                {isDeleting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Menyimpan...
+                    Menghapus...
                   </>
-                ) : editingItem ? (
-                  "Simpan Perubahan"
                 ) : (
-                  "Simpan Infografis"
+                  "Hapus Infografis"
                 )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation */}
-      <AlertDialog
-        open={!!deleteTarget}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
-        <AlertDialogContent className="rounded-[12px] border-sage dark:border-[#414943] bg-paper dark:bg-[#1a1a1a]">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="font-display text-headline-small text-obsidian dark:text-white">
-              Hapus Infografis?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-body-medium text-iron dark:text-[#c2c8bd]">
-              Anda akan menghapus{" "}
-              <span className="font-semibold text-obsidian dark:text-white">
-                &ldquo;{deleteTarget?.judul}&rdquo;
-              </span>
-              . Data yang sudah dihapus tidak dapat dikembalikan.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              disabled={isDeleting}
-              className="border-sage dark:border-[#414943] text-obsidian dark:text-white rounded-xs"
-            >
-              Batal
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-red-600 text-white rounded-xs hover:bg-red-700"
-            >
-              {isDeleting ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Menghapus...
-                </>
-              ) : (
-                "Hapus"
-              )}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </>
   );
 }
