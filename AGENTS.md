@@ -445,7 +445,7 @@ export async function POST(req: NextRequest) {
 - [x] 19. Halaman CRUD Wisata
 - [x] 20. Halaman kelola Galeri
 - [x] 21. Halaman edit profil desa & perangkat
-- [ ] 22. Halaman kelola Infografis
+- [x] 22. Halaman kelola Infografis
 
 ### Fase 4 — Testing & Deploy (Hari 13–14)
 - [ ] 23. Testing end-to-end (semua CRUD, auth, tampilan)
