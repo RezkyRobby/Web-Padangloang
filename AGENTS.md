@@ -442,7 +442,7 @@ export async function POST(req: NextRequest) {
 - [x] 16e. API routes untuk Infografis
 - [x] 17. Dashboard admin: tambah menu baru
 - [x] 18. Halaman CRUD UMKM (list, create, edit)
-- [ ] 19. Halaman CRUD Wisata
+- [x] 19. Halaman CRUD Wisata
 - [ ] 20. Halaman kelola Galeri
 - [ ] 21. Halaman edit profil desa & perangkat
 - [ ] 22. Halaman kelola Infografis
