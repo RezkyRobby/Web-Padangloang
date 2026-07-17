@@ -1,18 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { createGaleriSchema } from "@/lib/schemas/galeri";
 
-export async function GET(request: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const kategori = searchParams.get("kategori");
-    const limit = searchParams.get("limit");
+    const { searchParams } = new URL(req.url);
+    const kategori = searchParams.get("kategori")?.trim() ?? "";
+    const limit = Math.min(Number(searchParams.get("limit")) || 20, 50);
 
-    const where = kategori ? { kategori } : {};
+    const where: Record<string, unknown> = {};
+    if (kategori) where.kategori = kategori;
 
     const data = await prisma.galeri.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      ...(limit ? { take: parseInt(limit) } : {}),
+      take: limit,
+      include: {
+        uploadedBy: {
+          select: { id: true, name: true, image: true },
+        },
+      },
     });
 
     return NextResponse.json(data);
@@ -25,14 +33,32 @@ export async function GET(request: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const parsed = createGaleriSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          error: "Validasi gagal",
+          details: z.flattenError(parsed.error).fieldErrors,
+        },
+        { status: 422 },
+      );
+    }
+
     const data = await prisma.galeri.create({
       data: {
-        judul: body.judul,
-        gambar: body.gambar,
-        kategori: body.kategori,
-        uploadedById: body.uploadedById,
+        judul: parsed.data.judul,
+        gambar: parsed.data.gambar,
+        kategori: parsed.data.kategori,
+        uploadedById: parsed.data.uploadedById,
+      },
+      include: {
+        uploadedBy: {
+          select: { id: true, name: true, image: true },
+        },
       },
     });
+
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     console.error(error);
