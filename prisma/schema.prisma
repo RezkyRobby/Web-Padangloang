@@ -172,6 +172,17 @@ enum WisataKategori {
   @@map("wisata_kategori")
 }
 
+enum ChartType {
+  BAR_CHART
+  LINE_CHART
+  PIE_CHART
+  DOUGHNUT_CHART
+  AREA_CHART
+  STAT_CARDS
+
+  @@map("chart_type")
+}
+
 model Desa {
   id              String   @id @default(cuid())
   nama            String
@@ -247,12 +258,13 @@ model Galeri {
 }
 
 model Infografis {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   judul     String
   tahun     Int
   dataJson  Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  chartType ChartType @default(BAR_CHART)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("infografis")
 }

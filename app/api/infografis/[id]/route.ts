@@ -76,6 +76,9 @@ export async function PUT(
         ...(parsed.data.dataJson !== undefined
           ? { dataJson: parsed.data.dataJson }
           : {}),
+        ...(parsed.data.chartType !== undefined
+          ? { chartType: parsed.data.chartType }
+          : {}),
       },
     });
 

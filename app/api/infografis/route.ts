@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
         judul: parsed.data.judul,
         tahun: parsed.data.tahun,
         dataJson: parsed.data.dataJson,
+        chartType: parsed.data.chartType ?? "BAR_CHART",
       },
     });
 
