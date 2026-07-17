@@ -438,7 +438,7 @@ export async function POST(req: NextRequest) {
 - [x] 16a. API routes untuk UMKM (list, create, get, update, delete)
 - [x] 16b. API routes untuk Wisata
 - [x] 16c. API routes untuk Galeri
-- [ ] 16d. API routes untuk Desa + PerangkatDesa
+- [x] 16d. API routes untuk Desa + PerangkatDesa
 - [ ] 16e. API routes untuk Infografis
 - [ ] 17. Dashboard admin: tambah menu baru
 - [ ] 18. Halaman CRUD UMKM (list, create, edit)
