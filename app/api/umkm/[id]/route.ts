@@ -14,7 +14,7 @@ export async function GET(
     const data = await prisma.uMKM.findUnique({ where: { id } });
 
     if (!data) {
-      return NextResponse.json({ error: "Not Found" }, { status: 404 });
+      return NextResponse.json({ error: "Data tidak ditemukan" }, { status: 404 });
     }
 
     return NextResponse.json(data);
@@ -52,7 +52,7 @@ export async function PUT(
     });
 
     if (!existing) {
-      return NextResponse.json({ error: "Not Found" }, { status: 404 });
+      return NextResponse.json({ error: "Data tidak ditemukan" }, { status: 404 });
     }
 
     const data = await prisma.uMKM.update({
@@ -90,7 +90,7 @@ export async function DELETE(
     });
 
     if (!existing) {
-      return NextResponse.json({ error: "Not Found" }, { status: 404 });
+      return NextResponse.json({ error: "Data tidak ditemukan" }, { status: 404 });
     }
 
     await prisma.uMKM.delete({ where: { id } });

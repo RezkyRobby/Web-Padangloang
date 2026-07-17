@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
         harga: parsed.data.harga ?? null,
         kategori: parsed.data.kategori,
         kontak: parsed.data.kontak,
-        gambar: parsed.data.gambar ?? null,
+        gambar: parsed.data.gambar || null,
         pemilik: parsed.data.pemilik,
       },
     });

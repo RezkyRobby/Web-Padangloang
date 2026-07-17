@@ -435,7 +435,7 @@ export async function POST(req: NextRequest) {
 - [x] 15. Modifikasi halaman kontak + Google Maps
 
 ### Fase 3 — Admin & CRUD (Hari 10–12)
-- [ ] 16a. API routes untuk UMKM (list, create, get, update, delete)
+- [x] 16a. API routes untuk UMKM (list, create, get, update, delete)
 - [ ] 16b. API routes untuk Wisata
 - [ ] 16c. API routes untuk Galeri
 - [ ] 16d. API routes untuk Desa + PerangkatDesa
