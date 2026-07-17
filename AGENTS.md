@@ -436,7 +436,7 @@ export async function POST(req: NextRequest) {
 
 ### Fase 3 — Admin & CRUD (Hari 10–12)
 - [x] 16a. API routes untuk UMKM (list, create, get, update, delete)
-- [ ] 16b. API routes untuk Wisata
+- [x] 16b. API routes untuk Wisata
 - [ ] 16c. API routes untuk Galeri
 - [ ] 16d. API routes untuk Desa + PerangkatDesa
 - [ ] 16e. API routes untuk Infografis
