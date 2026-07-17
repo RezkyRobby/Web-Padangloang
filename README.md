@@ -529,7 +529,6 @@ Website Profil Desa Padangloang dikembangkan oleh mahasiswa KKN Universitas Hasa
 - Rezky Robbyyanto A
 - Yousran
 - Arelio Palinoan
-- Adrian Tri Putra
 
 ---
 
