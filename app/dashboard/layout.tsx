@@ -13,6 +13,7 @@
  */
 import { redirect } from "next/navigation";
 import { verifySession, STAFF_ROLES, type SessionUser } from "@/lib/dal";
+import DashboardShell from "@/components/admin/DashboardShell";
 
 export default async function DashboardLayout({
   children,
@@ -29,5 +30,5 @@ export default async function DashboardLayout({
     redirect("/");
   }
 
-  return <>{children}</>;
+  return <DashboardShell>{children}</DashboardShell>;
 }
