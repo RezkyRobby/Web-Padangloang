@@ -440,7 +440,7 @@ export default function DashboardInfografisPage() {
 
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTahun, setSelectedTahun] = useState<string>("");
+  const [selectedTahun, setSelectedTahun] = useState<string>("all");
   const [availableTahuns, setAvailableTahuns] = useState<number[]>([]);
 
   // Modal states
@@ -478,7 +478,7 @@ export default function DashboardInfografisPage() {
     setError(null);
     try {
       const params = new URLSearchParams();
-      if (selectedTahun) params.set("tahun", selectedTahun);
+      if (selectedTahun && selectedTahun !== "all") params.set("tahun", selectedTahun);
 
       const res = await fetch(`/api/infografis?${params.toString()}`);
       if (!res.ok) throw new Error("Gagal memuat data");
@@ -1104,7 +1104,7 @@ export default function DashboardInfografisPage() {
               </SelectValue>
             </SelectTrigger>
             <SelectContent className="rounded-lg border-sage dark:border-[#414943]">
-              <SelectItem value="">Semua Tahun</SelectItem>
+              <SelectItem value="all">Semua Tahun</SelectItem>
               {availableTahuns.map((tahun) => (
                 <SelectItem key={tahun} value={String(tahun)}>
                   {tahun}
