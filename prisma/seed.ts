@@ -29,6 +29,16 @@ async function hashBetterAuth(password: string): Promise<string> {
 async function main() {
   console.log("🌱 Seeding database...");
 
+  // --- CLEAN EXISTING DATA ---
+  console.log("🧹 Cleaning existing data...");
+  await prisma.infografis.deleteMany();
+  await prisma.wisata.deleteMany();
+  await prisma.uMKM.deleteMany();
+  await prisma.perangkatDesa.deleteMany();
+  await prisma.desa.deleteMany();
+  await prisma.category.deleteMany();
+  console.log("✅ Cleaned");
+
   // --- DESA ---
   const desa = await prisma.desa.upsert({
     where: { id: "desa-padangloang" },
