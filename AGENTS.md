@@ -717,7 +717,7 @@ export async function POST(req: NextRequest) {
 - [x] 29b. Buat halaman edit profil user (/akun/dashboard/profil): edit NIK, telepon
 - [x] 29c. Buat halaman riwayat permohonan user (/akun/dashboard/permohonan)
 - [x] 29d. Buat halaman detail tracking permohonan user (/akun/dashboard/permohonan/[id]): timeline progress + tombol batalkan jika MENUNGGU
-- [ ] 29e. Buat halaman pengajuan baru (/akun/dashboard/ajukan): pilih layanan, lihat persyaratan, pilih offline/online, isi form dinamis (online) / buat ticket langsung (offline), submit
+- [x] 29e. Buat halaman pengajuan baru (/akun/dashboard/ajukan): pilih layanan, lihat persyaratan, pilih offline/online, isi form dinamis (online) / buat ticket langsung (offline), submit
 
 #### 5D — Admin Panel Pelayanan
 - [ ] 30a. Buat halaman CRUD Layanan (/dashboard/layanan): list + new + edit

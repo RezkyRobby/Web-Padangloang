@@ -179,7 +179,8 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
     <ul className="hidden items-center gap-0.5 md:flex">
       {links.map((link) => {
         if (isDropdown(link)) {
-          const dropdownActive = pathname.startsWith(link.href) && link.href !== "/";
+          const dropdownActive =
+            pathname.startsWith(link.href) && link.href !== "/";
           return (
             <li key={link.href}>
               <DropdownMenu>
@@ -363,6 +364,44 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                   </li>
                 );
               })}
+
+              {/* User menu di mobile drawer */}
+              {session?.user && (
+                <>
+                  <li className="mt-2 border-t border-white/10 pt-2">
+                    <Link
+                      href="/akun/dashboard"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                    >
+                      <LayoutDashboard className="size-4 shrink-0 text-white/60" />
+                      Dashboard Saya
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href={`/akun/${session.user.id}`}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                    >
+                      <User className="size-4 shrink-0 text-white/60" />
+                      Profil
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        setMobileOpen(false);
+                        handleSignOut();
+                      }}
+                      className="flex w-full items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                    >
+                      <LogOut className="size-4 shrink-0 text-white/60" />
+                      Keluar
+                    </button>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -473,6 +512,12 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                             </Link>
                           </DropdownMenuItem>
                         )}
+                        <DropdownMenuItem asChild>
+                          <Link href="/akun/dashboard">
+                            <LayoutDashboard />
+                            Dashboard Saya
+                          </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link href={`/akun/${session.user.id}`}>
                             <User />
@@ -595,6 +640,15 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                             </Link>
                           </DropdownMenuItem>
                         )}
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href="/akun/dashboard"
+                            className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] hover:bg-[#f9faf7]"
+                          >
+                            <LayoutDashboard className="size-4" />
+                            Dashboard Saya
+                          </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link
                             href={`/akun/${session.user.id}`}
