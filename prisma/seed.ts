@@ -1,5 +1,5 @@
 import { scryptAsync } from "@noble/hashes/scrypt.js";
-import { Role, WisataKategori } from "@/lib/generated/prisma/client";
+import { FieldType, Role, WisataKategori } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
 function toHex(bytes: Uint8Array): string {
@@ -31,6 +31,7 @@ async function main() {
 
   // --- CLEAN EXISTING DATA ---
   console.log("🧹 Cleaning existing data...");
+  await prisma.post.deleteMany();
   await prisma.infografis.deleteMany();
   await prisma.wisata.deleteMany();
   await prisma.uMKM.deleteMany();
@@ -273,6 +274,68 @@ async function main() {
 
   console.log(`✅ Admin: ${adminUser.email} / admin123`);
   console.log(`✅ Editor: ${editorUser.email} / editor123`);
+
+  // --- LAYANAN (TRACKING PELAYANAN) ---
+  await prisma.layanan.deleteMany();
+  console.log("🧹 Cleaned layanan");
+
+  const layananData = [
+    {
+      nama: "Pengurusan KTP",
+      deskripsi: "Layanan pembuatan/perpanjangan Kartu Tanda Penduduk elektronik untuk warga Desa Padangloang.",
+      icon: "CreditCard",
+      isActive: true,
+      persyaratan: ["Fotokopi Kartu Keluarga", "Fotokopi Surat Pengantar RT", "Pas Foto 2x3 (2 lembar)"],
+      formFields: {
+        create: [
+          { label: "Nama Lengkap", fieldType: FieldType.TEXT, required: true, urutan: 1 },
+          { label: "NIK", fieldType: FieldType.TEXT, required: true, urutan: 2, placeholder: "16 digit NIK" },
+          { label: "Tempat Lahir", fieldType: FieldType.TEXT, required: true, urutan: 3 },
+          { label: "Tanggal Lahir", fieldType: FieldType.DATE, required: true, urutan: 4 },
+          { label: "Alamat", fieldType: FieldType.TEXTAREA, required: true, urutan: 5 },
+          { label: "Keperluan", fieldType: FieldType.TEXTAREA, required: true, urutan: 6 },
+        ],
+      },
+    },
+    {
+      nama: "Surat Keterangan Tanah",
+      deskripsi: "Layanan pembuatan surat keterangan kepemilikan/penguasaan tanah.",
+      icon: "FileText",
+      isActive: true,
+      persyaratan: ["Fotokopi KTP", "Fotokopi Kartu Keluarga", "Surat Pengantar RT/RW", "Bukti Kepemilikan Tanah (Sertifikat/Girik)"],
+      formFields: {
+        create: [
+          { label: "Nama Pemohon", fieldType: FieldType.TEXT, required: true, urutan: 1 },
+          { label: "NIK", fieldType: FieldType.TEXT, required: true, urutan: 2 },
+          { label: "Luas Tanah (m²)", fieldType: FieldType.NUMBER, required: true, urutan: 3 },
+          { label: "Letak Tanah", fieldType: FieldType.TEXTAREA, required: true, urutan: 4, placeholder: "Dusun, RT/RW" },
+          { label: "Jenis Bukti Kepemilikan", fieldType: FieldType.SELECT, required: true, urutan: 5, options: JSON.stringify(["Sertifikat Hak Milik", "Girik", "Letter C", "Akta Jual Beli"]) },
+          { label: "Keterangan Tambahan", fieldType: FieldType.TEXTAREA, required: false, urutan: 6 },
+        ],
+      },
+    },
+    {
+      nama: "Surat Keterangan Domisili",
+      deskripsi: "Layanan pembuatan surat keterangan domisili untuk keperluan administrasi warga.",
+      icon: "MapPin",
+      isActive: true,
+      persyaratan: ["Fotokopi KTP", "Fotokopi Kartu Keluarga", "Surat Pengantar RT"],
+      formFields: {
+        create: [
+          { label: "Nama Lengkap", fieldType: FieldType.TEXT, required: true, urutan: 1 },
+          { label: "NIK", fieldType: FieldType.TEXT, required: true, urutan: 2 },
+          { label: "Alamat Domisili", fieldType: FieldType.TEXTAREA, required: true, urutan: 3 },
+          { label: "Sudah Menetap Sejak", fieldType: FieldType.DATE, required: true, urutan: 4 },
+          { label: "Keperluan Domisili", fieldType: FieldType.TEXT, required: true, urutan: 5, placeholder: "Contoh: administrasi sekolah" },
+        ],
+      },
+    },
+  ];
+
+  for (const l of layananData) {
+    await prisma.layanan.create({ data: l });
+  }
+  console.log(`✅ Layanan: ${layananData.length} layanan dengan form fields`);
 
   console.log("🎉 Seeding selesai!");
 }
