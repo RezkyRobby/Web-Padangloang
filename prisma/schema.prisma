@@ -29,10 +29,12 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  sessions Session[]
-  accounts Account[]
-  posts    Post[]    @relation("PostAuthors")
-  galeri   Galeri[]
+  sessions     Session[]
+  accounts     Account[]
+  posts        Post[]            @relation("PostAuthors")
+  galeri       Galeri[]
+  permohonan   Permohonan[]
+  progress     ProgressHistory[]
 
   @@map("user")
 }
@@ -183,6 +185,39 @@ enum ChartType {
   @@map("chart_type")
 }
 
+// --- TRACKING PELAYANAN (FASE 5) ---
+
+enum StatusPermohonan {
+  MENUNGGU
+  DIPROSES
+  SELESAI
+  DITOLAK
+  DITANGGUHKAN
+  DIBATALKAN
+
+  @@map("status_permohonan")
+}
+
+enum JenisAjuan {
+  ONLINE
+  OFFLINE
+
+  @@map("jenis_ajuan")
+}
+
+enum FieldType {
+  TEXT
+  NUMBER
+  TEXTAREA
+  DATE
+  FILE_UPLOAD
+  SELECT
+  RADIO
+  CHECKBOX
+
+  @@map("field_type")
+}
+
 model Desa {
   id              String   @id @default(cuid())
   nama            String
@@ -267,4 +302,83 @@ model Infografis {
   updatedAt DateTime  @updatedAt
 
   @@map("infografis")
+}
+
+model Layanan {
+  id           String    @id @default(cuid())
+  nama         String
+  deskripsi    String?   @db.Text
+  icon         String?
+  isActive     Boolean   @default(true)
+  hanyaOffline Boolean   @default(false)
+  persyaratan  Json?     // Array string: ["KTP", "KK", "Surat Pengantar RT"]
+  templateFile String?   // Cloudinary URL template (PDF)
+  formFields   FormField[]
+  permohonan   Permohonan[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("layanan")
+}
+
+model FormField {
+  id          String          @id @default(cuid())
+  layananId   String
+  layanan     Layanan         @relation(fields: [layananId], references: [id], onDelete: Cascade)
+  label       String
+  fieldType   FieldType
+  required    Boolean         @default(false)
+  placeholder String?
+  options     Json?           // Untuk SELECT/RADIO/CHECKBOX: ["Pilihan 1", "Pilihan 2"]
+  urutan      Int             @default(0)
+  data        PermohonanData[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("form_field")
+}
+
+model Permohonan {
+  id         String           @id @default(cuid())
+  nomorTiket String           @unique // Format: PL-YYYYMMDD-XXX
+  layananId  String?
+  layanan    Layanan?         @relation(fields: [layananId], references: [id])
+  userId     String
+  user       User             @relation(fields: [userId], references: [id])
+  jenisAjuan JenisAjuan
+  status     StatusPermohonan @default(MENUNGGU)
+  catatan    String?          @db.Text
+  data       PermohonanData[]
+  progress   ProgressHistory[]
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@index([userId])
+  @@map("permohonan")
+}
+
+model PermohonanData {
+  id           String      @id @default(cuid())
+  permohonanId String
+  permohonan   Permohonan  @relation(fields: [permohonanId], references: [id], onDelete: Cascade)
+  formFieldId  String
+  formField    FormField   @relation(fields: [formFieldId], references: [id])
+  value        String      @db.Text // Teks atau Cloudinary URL (FILE_UPLOAD)
+
+  @@index([permohonanId])
+  @@map("permohonan_data")
+}
+
+model ProgressHistory {
+  id           String           @id @default(cuid())
+  permohonanId String
+  permohonan   Permohonan       @relation(fields: [permohonanId], references: [id], onDelete: Cascade)
+  status       StatusPermohonan
+  catatan      String?          @db.Text
+  createdById  String
+  createdBy    User             @relation(fields: [createdById], references: [id])
+  createdAt    DateTime         @default(now())
+
+  @@index([permohonanId])
+  @@map("progress_history")
 }

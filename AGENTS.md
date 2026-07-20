@@ -699,7 +699,7 @@ export async function POST(req: NextRequest) {
 ### Fase 5 — Tracking Pelayanan (Hari 15–19)
 
 #### 5A — Database & Setup
-- [ ] 28a. Tambah model Layanan, FormField, Permohonan, PermohonanData, ProgressHistory + enum StatusPermohonan, JenisAjuan, FieldType ke prisma/schema.prisma
+- [x] 28a. Tambah model Layanan, FormField, Permohonan, PermohonanData, ProgressHistory + enum StatusPermohonan, JenisAjuan, FieldType ke prisma/schema.prisma
 - [ ] 28b. Modifikasi model User: tambah field nik String? dan phoneNumber String? + relasi permohonan Permohonan[] dan progress ProgressHistory[]
 - [ ] 28c. Jalankan migrasi: npx prisma migrate dev --name add_layanan_models
 - [ ] 28d. Buat seed data layanan contoh (KK, Surat Tanah, Surat Keterangan Domisili) dengan form fields masing-masing
