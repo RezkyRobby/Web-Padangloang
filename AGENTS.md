@@ -713,8 +713,8 @@ export async function POST(req: NextRequest) {
 - [x] 28j. API route untuk kirim email (POST: nodemailer Gmail SMTP)
 
 #### 5C — Dashboard User
-- [ ] 29a. Buat halaman dashboard user (/akun/dashboard): profil ringkas + 5 permohonan terbaru + tombol ajukan
-- [ ] 29b. Buat halaman edit profil user (/akun/dashboard/profil): edit NIK, telepon
+- [x] 29a. Buat halaman dashboard user (/akun/dashboard): profil ringkas + 5 permohonan terbaru + tombol ajukan
+- [x] 29b. Buat halaman edit profil user (/akun/dashboard/profil): edit NIK, telepon
 - [ ] 29c. Buat halaman riwayat permohonan user (/akun/dashboard/permohonan)
 - [ ] 29d. Buat halaman detail tracking permohonan user (/akun/dashboard/permohonan/[id]): timeline progress + tombol batalkan jika MENUNGGU
 - [ ] 29e. Buat halaman pengajuan baru (/akun/dashboard/ajukan): pilih layanan, lihat persyaratan, pilih offline/online, isi form dinamis (online) / buat ticket langsung (offline), submit
