@@ -705,12 +705,12 @@ export async function POST(req: NextRequest) {
 - [x] 28d. Buat seed data layanan contoh (KK, Surat Tanah, Surat Keterangan Domisili) dengan form fields masing-masing
 
 #### 5B — API Routes
-- [ ] 28e. API routes untuk Layanan (list, create, get, update, delete)
-- [ ] 28f. API routes untuk FormField per Layanan (list, create, get, update, delete)
-- [ ] 28g. API routes untuk Permohonan (list + filter, create + generate nomor tiket)
-- [ ] 28h. API routes untuk ProgressHistory per Permohonan (list, create)
-- [ ] 28i. API route untuk user profile (GET, PUT: nik, phoneNumber)
-- [ ] 28j. API route untuk kirim email (POST: nodemailer Gmail SMTP)
+- [x] 28e. API routes untuk Layanan (list, create, get, update, delete)
+- [x] 28f. API routes untuk FormField per Layanan (list, create, get, update, delete)
+- [x] 28g. API routes untuk Permohonan (list + filter, create + generate nomor tiket)
+- [x] 28h. API routes untuk ProgressHistory per Permohonan (list, create)
+- [x] 28i. API route untuk user profile (GET, PUT: nik, phoneNumber)
+- [x] 28j. API route untuk kirim email (POST: nodemailer Gmail SMTP)
 
 #### 5C — Dashboard User
 - [ ] 29a. Buat halaman dashboard user (/akun/dashboard): profil ringkas + 5 permohonan terbaru + tombol ajukan
