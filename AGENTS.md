@@ -26,11 +26,12 @@ Panduan teknis untuk AI agent dalam membangun Website Profil Desa Padangloang, K
 | Testing | `test:` | `test: testing end-to-end semua CRUD` |
 | Deploy | `deploy:` | `deploy: konfigurasi Vercel dan deploy` |
 
-- Contoh perintah:
+- Contoh perintah (Wajib dipisah, jangan digabung dengan `&&`):
   ```bash
   git add -A
   git commit -m "feat(api): tambah API routes untuk Layanan (list, create, get, update, delete)"
   ```
+  **Catatan:** Perintah `git add` dan `git commit` harus dijalankan **satu per satu (dua baris terpisah)**. Jangan digabung dengan `&&` karena tidak berfungsi di environment shell ini.
 
 ### 0.3 Verifikasi Per Task
 Sebelum commit, pastikan:
@@ -720,8 +721,8 @@ export async function POST(req: NextRequest) {
 - [x] 29e. Buat halaman pengajuan baru (/akun/dashboard/ajukan): pilih layanan, lihat persyaratan, pilih offline/online, isi form dinamis (online) / buat ticket langsung (offline), submit
 
 #### 5D — Admin Panel Pelayanan
-- [ ] 30a. Buat halaman CRUD Layanan (/dashboard/layanan): list + new + edit
-- [ ] 30b. Buat halaman Form Builder (/dashboard/layanan/[id]/form): kelola FormField
+- [x] 30a. Buat halaman CRUD Layanan (/dashboard/layanan): list + new + edit
+- [x] 30b. Buat halaman Form Builder (/dashboard/layanan/[id]/form): kelola FormField
 - [ ] 30c. Buat halaman daftar permohonan (/dashboard/permohonan): filter status/layanan/tanggal, search
 - [ ] 30d. Buat halaman detail permohonan admin (/dashboard/permohonan/[id])
 
@@ -892,6 +893,7 @@ Floating navigation island (Graphite Night #282834, pill-shaped 50px+ radius, ce
 | Dark mode flicker | Pastikan `next-themes` `ThemeProvider` di root layout |
 | Image broken | Cek URL Cloudinary atau gunakan fallback image |
 | Next.js build error | Cek `npx prisma migrate deploy` di `package.json` build script |
+| `git add -A && git commit` gagal | Jalankan `git add -A` dan `git commit -m "..."` secara terpisah (dua perintah terpisah), jangan digabung dengan `&&` |
 
 ---
 
