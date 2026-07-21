@@ -723,7 +723,7 @@ export async function POST(req: NextRequest) {
 #### 5D — Admin Panel Pelayanan
 - [x] 30a. Buat halaman CRUD Layanan (/dashboard/layanan): list + new + edit
 - [x] 30b. Buat halaman Form Builder (/dashboard/layanan/[id]/form): kelola FormField
-- [ ] 30c. Buat halaman daftar permohonan (/dashboard/permohonan): filter status/layanan/tanggal, search
+- [x] 30c. Buat halaman daftar permohonan (/dashboard/permohonan): filter status/layanan/tanggal, search
 - [ ] 30d. Buat halaman detail permohonan admin (/dashboard/permohonan/[id])
 
 #### 5E — Integrasi
