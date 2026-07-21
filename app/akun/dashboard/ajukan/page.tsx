@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   ArrowLeft,
   ArrowRight,
@@ -13,6 +14,7 @@ import {
   AlertCircle,
   Building2,
   Download,
+  Eye,
   X,
   CheckSquare,
 } from "lucide-react";
@@ -38,14 +40,21 @@ import Navbar from "@/components/custom/navbar";
 import { cn } from "@/lib/utils";
 
 // --- Types ---
+interface PersyaratanItem {
+  id: string;
+  nama: string;
+  contohGambar: string | null;
+  templateFile: string | null;
+  urutan: number;
+}
+
 interface Layanan {
   id: string;
   nama: string;
   deskripsi: string | null;
   icon: string | null;
   hanyaOffline: boolean;
-  persyaratan: string[] | null;
-  templateFile: string | null;
+  persyaratanList: PersyaratanItem[];
   formFields: FormField[];
 }
 
@@ -354,46 +363,77 @@ export default function AjukanPage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Persyaratan */}
+                {/* Persyaratan Cards */}
                 <div>
-                  <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
                     <CheckSquare className="size-4 text-primary" />
                     Persyaratan & Berkas
                   </h4>
-                  {selectedLayanan.persyaratan &&
-                  selectedLayanan.persyaratan.length > 0 ? (
-                    <ul className="space-y-1.5">
-                      {selectedLayanan.persyaratan.map((p, i) => (
-                        <li
-                          key={i}
-                          className="flex items-center gap-2 text-sm text-foreground/70"
-                        >
-                          <CheckCircle2 className="size-4 shrink-0 text-green-600 dark:text-green-400" />
-                          {p}
-                        </li>
-                      ))}
-                    </ul>
+                  {selectedLayanan.persyaratanList &&
+                  selectedLayanan.persyaratanList.length > 0 ? (
+                    <div className="space-y-3">
+                      {selectedLayanan.persyaratanList
+                        .sort((a, b) => a.urutan - b.urutan)
+                        .map((p) => (
+                          <div
+                            key={p.id}
+                            className="rounded-lg border border-sage/50 dark:border-[#414943]/50 bg-card p-4 space-y-3"
+                          >
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 className="size-4 shrink-0 text-green-600 dark:text-green-400" />
+                              <span className="font-semibold text-sm text-foreground">
+                                {p.nama}
+                              </span>
+                            </div>
+
+                            {/* Contoh Gambar */}
+                            {p.contohGambar && (
+                              <div className="space-y-1.5">
+                                <p className="text-xs text-foreground/50 flex items-center gap-1.5">
+                                  <Eye className="size-3" />
+                                  Contoh file yang disiapkan:
+                                </p>
+                                <button
+                                  type="button"
+                                  onClick={() => window.open(p.contohGambar!, "_blank")}
+                                  className="group relative w-full aspect-video rounded-lg overflow-hidden border border-sage/30 dark:border-[#414943]/30"
+                                >
+                                  <Image
+                                    src={p.contohGambar}
+                                    alt={`Contoh ${p.nama}`}
+                                    fill
+                                    className="object-cover transition-transform group-hover:scale-105"
+                                  />
+                                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                                    <Eye className="size-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+                                  </div>
+                                </button>
+                              </div>
+                            )}
+
+                            {/* Template File */}
+                            {p.templateFile && (
+                              <div>
+                                <a
+                                  href={p.templateFile}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+                                >
+                                  <Download className="size-3.5" />
+                                  Download berkas
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                    </div>
                   ) : (
                     <p className="text-sm text-foreground/40">
                       Tidak ada persyaratan khusus.
                     </p>
                   )}
                 </div>
-
-                {/* Template */}
-                {selectedLayanan.templateFile && (
-                  <div className="rounded-lg border border-dashed bg-foreground/5 p-3">
-                    <a
-                      href={selectedLayanan.templateFile}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
-                    >
-                      <Download className="size-4" />
-                      Download Template Formulir (PDF)
-                    </a>
-                  </div>
-                )}
 
                 <Separator />
 

@@ -15,6 +15,9 @@ export async function GET(
         formFields: {
           orderBy: { urutan: "asc" },
         },
+        persyaratanList: {
+          orderBy: { urutan: "asc" },
+        },
         _count: {
           select: { permohonan: true },
         },
@@ -78,12 +81,6 @@ export async function PUT(
           : {}),
         ...(parsed.data.hanyaOffline !== undefined
           ? { hanyaOffline: parsed.data.hanyaOffline }
-          : {}),
-        ...(parsed.data.persyaratan !== undefined
-          ? { persyaratan: parsed.data.persyaratan }
-          : {}),
-        ...(parsed.data.templateFile !== undefined
-          ? { templateFile: parsed.data.templateFile }
           : {}),
       },
     });

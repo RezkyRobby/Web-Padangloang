@@ -6,12 +6,6 @@ export const createLayananSchema = z.object({
   icon: z.string().optional(),
   isActive: z.boolean().optional().default(true),
   hanyaOffline: z.boolean().optional().default(false),
-  persyaratan: z.array(z.string()).optional(),
-  templateFile: z
-    .string()
-    .url("URL template tidak valid")
-    .or(z.literal(""))
-    .optional(),
 });
 
 export type CreateLayananInput = z.infer<typeof createLayananSchema>;
@@ -22,12 +16,6 @@ export const updateLayananSchema = z.object({
   icon: z.string().optional(),
   isActive: z.boolean().optional(),
   hanyaOffline: z.boolean().optional(),
-  persyaratan: z.array(z.string()).optional(),
-  templateFile: z
-    .string()
-    .url("URL template tidak valid")
-    .or(z.literal(""))
-    .optional(),
 });
 
 export type UpdateLayananInput = z.infer<typeof updateLayananSchema>;

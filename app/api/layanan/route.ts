@@ -21,6 +21,9 @@ export async function GET(req: NextRequest) {
         formFields: {
           orderBy: { urutan: "asc" },
         },
+        persyaratanList: {
+          orderBy: { urutan: "asc" },
+        },
         _count: {
           select: { permohonan: true },
         },
@@ -59,10 +62,6 @@ export async function POST(req: NextRequest) {
         icon: parsed.data.icon || null,
         isActive: parsed.data.isActive,
         hanyaOffline: parsed.data.hanyaOffline,
-        ...(parsed.data.persyaratan
-          ? { persyaratan: parsed.data.persyaratan }
-          : {}),
-        templateFile: parsed.data.templateFile || null,
       },
     });
 

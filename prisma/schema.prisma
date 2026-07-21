@@ -307,20 +307,34 @@ model Infografis {
 }
 
 model Layanan {
-  id           String    @id @default(cuid())
+  id           String         @id @default(cuid())
   nama         String
-  deskripsi    String?   @db.Text
+  deskripsi    String?        @db.Text
   icon         String?
-  isActive     Boolean   @default(true)
-  hanyaOffline Boolean   @default(false)
-  persyaratan  Json?     // Array string: ["KTP", "KK", "Surat Pengantar RT"]
-  templateFile String?   // Cloudinary URL template (PDF)
+  isActive     Boolean        @default(true)
+  hanyaOffline Boolean        @default(false)
   formFields   FormField[]
+  persyaratanList Persyaratan[]
   permohonan   Permohonan[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   @@map("layanan")
+}
+
+model Persyaratan {
+  id           String   @id @default(cuid())
+  layananId    String
+  layanan      Layanan  @relation(fields: [layananId], references: [id], onDelete: Cascade)
+  nama         String
+  contohGambar String?
+  templateFile String?
+  urutan       Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([layananId])
+  @@map("persyaratan")
 }
 
 model FormField {

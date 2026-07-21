@@ -1,0 +1,561 @@
+) : (
+                              <span className="text-sm text-muted-foreground">—</span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8 hover:bg-background"
+                            onClick={() => openEditFieldDialog(field)}
+                            title="Edit"
+                          >
+                            <Pencil className="size-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8 hover:bg-destructive/10 hover:text-destructive"
+                            onClick={() => {
+                              setFieldToDelete(field);
+                              setDeleteDialogOpen(true);
+                            }}
+                            title="Hapus"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </Card>
+        </TabsContent>
+
+        {/* ══════════════════════════════════════════════════════════════════════ */}
+        {/* TAB: PERSYARATAN                                                    */}
+        {/* ══════════════════════════════════════════════════════════════════════ */}
+        <TabsContent value="persyaratan" className="mt-0 space-y-4">
+          <Card className="overflow-hidden border-sage dark:border-[#414943]">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-fog/50 dark:bg-[#2e2e2e]/50">
+                  <TableHead className="w-10">#</TableHead>
+                  <TableHead>Nama Persyaratan</TableHead>
+                  <TableHead>Contoh Gambar</TableHead>
+                  <TableHead>File Template</TableHead>
+                  <TableHead className="w-28 text-right">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <PersyaratanSkeleton key={i} />
+                  ))
+                ) : persyaratanList.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="p-0">
+                      <EmptyPersyaratanState onAdd={openAddPersyaratanDialog} />
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  persyaratanList.map((p, idx) => (
+                    <TableRow
+                      key={p.id}
+                      className="group transition-colors hover:bg-fog/50 dark:hover:bg-[#2e2e2e]/50"
+                    >
+                      <TableCell className="text-sm text-muted-foreground">
+                        {idx + 1}
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm font-semibold text-foreground">
+                          {p.nama}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        {p.contohGambar ? (
+                          <Badge
+                            variant="secondary"
+                            className="bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 text-[11px] font-medium"
+                          >
+                            <ImageIcon className="mr-1 size-3" />
+                            Ada
+                          </Badge>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {p.templateFile ? (
+                          <Badge
+                            variant="secondary"
+                            className="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400 text-[11px] font-medium"
+                          >
+                            <FileText className="mr-1 size-3" />
+                            Ada
+                          </Badge>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8 hover:bg-background"
+                            onClick={() => openEditPersyaratanDialog(p)}
+                            title="Edit"
+                          >
+                            <Pencil className="size-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8 hover:bg-destructive/10 hover:text-destructive"
+                            onClick={() => {
+                              setPersyaratanToDelete(p);
+                              setDeletePersyaratanDialogOpen(true);
+                            }}
+                            title="Hapus"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* ════════════════════════════════════════════════════════════════════════ */}
+      {/* FIELD DIALOG                                                          */}
+      {/* ════════════════════════════════════════════════════════════════════════ */}
+      <Dialog open={fieldDialogOpen} onOpenChange={setFieldDialogOpen}>
+        <DialogContent className="sm:max-w-lg animate-in zoom-in-95 fade-in duration-200 max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editField ? "Edit Field" : "Tambah Field Baru"}
+            </DialogTitle>
+            <DialogDescription>
+              {editField
+                ? "Ubah pengaturan field formulir layanan ini."
+                : "Tambahkan field baru ke formulir layanan ini."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 py-2">
+            {/* Label */}
+            <div className="space-y-2">
+              <Label htmlFor="label">
+                Label Field <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="label"
+                placeholder="Contoh: Nama Lengkap"
+                value={formLabel}
+                onChange={(e) => setFormLabel(e.target.value)}
+                className="border-sage dark:border-[#414943] bg-background"
+              />
+            </div>
+
+            {/* Field Type */}
+            <div className="space-y-2">
+              <Label htmlFor="fieldType">
+                Tipe Input <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={formFieldType}
+                onValueChange={(v) => setFormFieldType(v)}
+              >
+                <SelectTrigger
+                  id="fieldType"
+                  className="border-sage dark:border-[#414943] bg-background"
+                >
+                  <SelectValue placeholder="Pilih tipe field" />
+                </SelectTrigger>
+                <SelectContent>
+                  {FIELD_TYPE_OPTIONS.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {FIELD_TYPE_LABELS[type]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Placeholder */}
+            <div className="space-y-2">
+              <Label htmlFor="placeholder">Placeholder (opsional)</Label>
+              <Input
+                id="placeholder"
+                placeholder="Teks petunjuk dalam field"
+                value={formPlaceholder}
+                onChange={(e) => setFormPlaceholder(e.target.value)}
+                className="border-sage dark:border-[#414943] bg-background"
+              />
+            </div>
+
+            {/* Required */}
+            <div className="flex items-center justify-between rounded-lg border border-sage dark:border-[#414943] p-4">
+              <div className="space-y-0.5">
+                <Label htmlFor="required" className="text-sm font-semibold">
+                  Wajib Diisi
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  User harus mengisi field ini
+                </p>
+              </div>
+              <Switch
+                id="required"
+                checked={formRequired}
+                onCheckedChange={setFormRequired}
+              />
+            </div>
+
+            {/* Options (only for SELECT/RADIO/CHECKBOX) */}
+            {["SELECT", "RADIO", "CHECKBOX"].includes(formFieldType) && (
+              <div className="space-y-3 rounded-lg border border-sage dark:border-[#414943] p-4">
+                <div className="space-y-0.5">
+                  <Label className="text-sm font-semibold">
+                    Opsi Pilihan <span className="text-destructive">*</span>
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Masukkan opsi-opsi yang akan tersedia untuk dipilih user
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5 min-h-8">
+                  {formOptions.length === 0 ? (
+                    <span className="text-xs text-steel italic">
+                      Belum ada opsi
+                    </span>
+                  ) : (
+                    formOptions.map((opt, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center gap-1 rounded-md bg-fog dark:bg-[#2e2e2e] px-2.5 py-1 text-xs font-medium text-foreground"
+                      >
+                        {opt}
+                        <button
+                          onClick={() => removeOption(i)}
+                          className="text-steel hover:text-destructive transition-colors"
+                        >
+                          <X className="size-3" />
+                        </button>
+                      </span>
+                    ))
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Ketik opsi lalu tambah..."
+                    value={optionInput}
+                    onChange={(e) => setOptionInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addOption();
+                      }
+                    }}
+                    className="border-sage dark:border-[#414943] bg-background flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addOption}
+                    disabled={!optionInput.trim()}
+                    className="shrink-0 border-sage dark:border-[#414943]"
+                  >
+                    <Plus className="mr-1 size-3.5" />
+                    Tambah
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Urutan */}
+            <div className="space-y-2">
+              <Label htmlFor="urutan">Urutan</Label>
+              <Input
+                id="urutan"
+                type="number"
+                min={0}
+                value={formUrutan}
+                onChange={(e) => setFormUrutan(parseInt(e.target.value) || 0)}
+                className="border-sage dark:border-[#414943] bg-background w-24"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              className="border-sage dark:border-[#414943]"
+              onClick={() => setFieldDialogOpen(false)}
+              disabled={submitting}
+            >
+              Batal
+            </Button>
+            <Button onClick={handleFieldSubmit} disabled={submitting}>
+              {submitting ? (
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              ) : editField ? (
+                <Pencil className="mr-2 size-4" />
+              ) : (
+                <Plus className="mr-2 size-4" />
+              )}
+              {editField ? "Perbarui" : "Tambah"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ════════════════════════════════════════════════════════════════════════ */}
+      {/* PERSYARATAN DIALOG                                                    */}
+      {/* ════════════════════════════════════════════════════════════════════════ */}
+      <Dialog open={persyaratanDialogOpen} onOpenChange={setPersyaratanDialogOpen}>
+        <DialogContent className="sm:max-w-lg animate-in zoom-in-95 fade-in duration-200 max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editPersyaratan
+                ? "Edit Persyaratan"
+                : "Tambah Persyaratan Baru"}
+            </DialogTitle>
+            <DialogDescription>
+              {editPersyaratan
+                ? "Ubah persyaratan layanan ini."
+                : "Tambahkan persyaratan baru untuk layanan ini."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 py-2">
+            {/* Nama */}
+            <div className="space-y-2">
+              <Label htmlFor="persyaratanNama">
+                Nama Persyaratan <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="persyaratanNama"
+                placeholder="Contoh: Fotokopi KTP"
+                value={persyaratanNama}
+                onChange={(e) => setPersyaratanNama(e.target.value)}
+                className="border-sage dark:border-[#414943] bg-background"
+              />
+              <p className="text-xs text-muted-foreground">
+                Nama dokumen yang harus dipenuhi, misalnya &ldquo;Fotokopi KTP&rdquo; atau &ldquo;Surat Pernyataan&rdquo;
+              </p>
+            </div>
+
+            {/* Contoh Gambar */}
+            <div className="space-y-3 rounded-lg border border-sage dark:border-[#414943] p-4">
+              <div className="space-y-0.5">
+                <Label className="text-sm font-semibold">
+                  Contoh Gambar (opsional)
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Upload contoh gambar bagaimana dokumen yang benar harus diisi
+                </p>
+              </div>
+
+              {persyaratanContohGambar && (
+                <div className="relative rounded-lg overflow-hidden border border-sage dark:border-[#414943]">
+                  <Image
+                    src={persyaratanContohGambar}
+                    alt="Preview contoh gambar"
+                    width={400}
+                    height={250}
+                    className="w-full h-48 object-cover"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-2 right-2 size-6 bg-background/80 hover:bg-background"
+                    onClick={() => setPersyaratanContohGambar("")}
+                  >
+                    <X className="size-3" />
+                  </Button>
+                </div>
+              )}
+
+              {!persyaratanContohGambar && (
+                <div className="flex items-center gap-3">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    disabled={uploadingGambar}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const url = await uploadFile(file, "gambar");
+                      if (url) setPersyaratanContohGambar(url);
+                    }}
+                    className="border-sage dark:border-[#414943] bg-background flex-1 file:text-sm"
+                  />
+                  {uploadingGambar && <Loader2 className="size-4 animate-spin shrink-0" />}
+                </div>
+              )}
+
+              {/* URL input manual */}
+              <Input
+                placeholder="Atau masukkan URL gambar langsung..."
+                value={persyaratanContohGambar}
+                onChange={(e) => setPersyaratanContohGambar(e.target.value)}
+                className="border-sage dark:border-[#414943] bg-background text-xs"
+              />
+            </div>
+
+            {/* File Template (PDF) */}
+            <div className="space-y-3 rounded-lg border border-sage dark:border-[#414943] p-4">
+              <div className="space-y-0.5">
+                <Label className="text-sm font-semibold">
+                  File Template (opsional)
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Upload file PDF template yang bisa diunduh user sebagai contoh
+                </p>
+              </div>
+
+              {persyaratanTemplateFile && (
+                <div className="flex items-center justify-between rounded-lg bg-fog/50 dark:bg-[#2e2e2e]/50 p-3 border border-sage dark:border-[#414943]">
+                  <div className="flex items-center gap-2">
+                    <FileText className="size-4 text-hudson-blue" />
+                    <span className="text-sm font-medium text-foreground">
+                      Template terupload
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-6 hover:bg-destructive/10 hover:text-destructive"
+                    onClick={() => setPersyaratanTemplateFile("")}
+                  >
+                    <X className="size-3" />
+                  </Button>
+                </div>
+              )}
+
+              {!persyaratanTemplateFile && (
+                <div className="flex items-center gap-3">
+                  <Input
+                    type="file"
+                    accept=".pdf"
+                    disabled={uploadingTemplate}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const url = await uploadFile(file, "template");
+                      if (url) setPersyaratanTemplateFile(url);
+                    }}
+                    className="border-sage dark:border-[#414943] bg-background flex-1 file:text-sm"
+                  />
+                  {uploadingTemplate && <Loader2 className="size-4 animate-spin shrink-0" />}
+                </div>
+              )}
+
+              {/* URL input manual */}
+              <Input
+                placeholder="Atau masukkan URL file langsung..."
+                value={persyaratanTemplateFile}
+                onChange={(e) => setPersyaratanTemplateFile(e.target.value)}
+                className="border-sage dark:border-[#414943] bg-background text-xs"
+              />
+            </div>
+
+            {/* Urutan */}
+            <div className="space-y-2">
+              <Label htmlFor="persyaratanUrutan">Urutan</Label>
+              <Input
+                id="persyaratanUrutan"
+                type="number"
+                min={0}
+                value={persyaratanUrutan}
+                onChange={(e) =>
+                  setPersyaratanUrutan(parseInt(e.target.value) || 0)
+                }
+                className="border-sage dark:border-[#414943] bg-background w-24"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              className="border-sage dark:border-[#414943]"
+              onClick={() => setPersyaratanDialogOpen(false)}
+              disabled={submitting}
+            >
+              Batal
+            </Button>
+            <Button onClick={handlePersyaratanSubmit} disabled={submitting}>
+              {submitting ? (
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              ) : editPersyaratan ? (
+                <Pencil className="mr-2 size-4" />
+              ) : (
+                <Plus className="mr-2 size-4" />
+              )}
+              {editPersyaratan ? "Perbarui" : "Tambah"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ════════════════════════════════════════════════════════════════════════ */}
+      {/* DELETE FIELD CONFIRM DIALOG                                           */}
+      {/* ════════════════════════════════════════════════════════════════════════ */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md animate-in zoom-in-95 fade-in duration-200">
+          <DialogHeader>
+            <DialogTitle>Konfirmasi Hapus</DialogTitle>
+            <DialogDescription>
+              Apakah Anda yakin ingin menghapus field{" "}
+              <span className="font-semibold text-foreground">
+                &ldquo;{fieldToDelete?.label}&rdquo;
+              </span>
+              ? Tindakan ini tidak dapat dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              className="border-sage dark:border-[#414943]"
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setFieldToDelete(null);
+              }}
+              disabled={deleting}
+            >
+              Batal
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleFieldDelete}
+              disabled={deleting}
+            >
+              {deleting ? (
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              ) : (
+                <Trash2 className="mr-2 size-4" />
+              )}
+              Hapus
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ════════════════════════════════════════════════════════════════════════ */}
+      {/* DELETE PERSYARATAN
