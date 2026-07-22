@@ -20,6 +20,7 @@ import {
   EyeOff,
   Building2,
   Ban,
+  ClipboardList,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -528,8 +529,21 @@ export default function LayananPage() {
                   <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
                     {formatDate(item.createdAt)}
                   </TableCell>
-                  <TableCell className="text-right">
+                      <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8 hover:bg-indigo-100 hover:text-indigo-600 dark:hover:bg-indigo-500/20 dark:hover:text-indigo-400"
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/layanan/${item.id}/form`,
+                          )
+                        }
+                        title="Kelola Form"
+                      >
+                        <ClipboardList className="size-3.5" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"

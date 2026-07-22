@@ -728,7 +728,7 @@ export async function POST(req: NextRequest) {
 
 #### 5E — Integrasi
 - [x] 31a. Update dashboard admin overview: card ringkasan permohonan
-- [ ] 31b. Update AdminSidebar: menu Layanan & Permohonan
+- [x] 31b. Update AdminSidebar: menu Layanan & Permohonan
 - [ ] 31c. Kirim email notifikasi SELESAI/DITOLAK (Nodemailer)
 - [ ] 31d. In-web notifikasi toast (sonner)
 
