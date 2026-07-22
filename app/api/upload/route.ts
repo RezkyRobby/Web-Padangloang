@@ -8,13 +8,20 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+// Tipe file yang diizinkan — image dan PDF
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+const PDF_TYPE = "application/pdf";
+const ALLOWED_TYPES = [...IMAGE_TYPES, PDF_TYPE];
+
+// Batas ukuran: 5 MB untuk image, 10 MB untuk PDF
+const MAX_SIZE_IMAGE = 5 * 1024 * 1024;
+const MAX_SIZE_PDF = 10 * 1024 * 1024;
 
 // POST /api/upload
-// Uploads an image file to Cloudinary. Requires authentication.
-// Body: multipart/form-data — fields: file (image), folder (optional, default: "portal-berita")
-// Allowed types: JPG, PNG, GIF, WebP. Max size: 5 MB.
+// Uploads an image or PDF file to Cloudinary. Requires authentication.
+// Body: multipart/form-data — fields: file (image/PDF), folder (optional, default: "portal-berita")
+// Image types: JPG, PNG, GIF, WebP — Max 5 MB
+// PDF type: PDF — Max 10 MB
 export async function POST(req: NextRequest) {
   try {
     const authResult = await requireAuth();
@@ -31,39 +38,63 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Validasi tipe file
     if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
         {
           error:
-            "Format file tidak didukung. Gunakan JPG, PNG, GIF, atau WebP.",
+            "Format file tidak didukung. Gunakan JPG, PNG, GIF, WebP (gambar) atau PDF (dokumen).",
         },
         { status: 400 },
       );
     }
 
-    if (file.size > MAX_SIZE_BYTES) {
+    // Validasi ukuran — bedakan antara image dan PDF
+    const isPdf = file.type === PDF_TYPE;
+    const maxSize = isPdf ? MAX_SIZE_PDF : MAX_SIZE_IMAGE;
+
+    if (file.size > maxSize) {
+      const maxSizeMB = maxSize / (1024 * 1024);
       return NextResponse.json(
-        { error: "Ukuran file melebihi batas 5 MB." },
+        { error: `Ukuran file melebihi batas ${maxSizeMB} MB.` },
         { status: 400 },
       );
     }
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const dataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
 
-    const result = await cloudinary.uploader.upload(dataUri, {
-      folder,
-      resource_type: "image",
-    });
+    // PDF upload via base64 langsung (Cloudinary raw)
+    // Image upload via data URI
+    let uploadResult;
+
+    if (isPdf) {
+      uploadResult = await cloudinary.uploader.upload(
+        `data:${file.type};base64,${buffer.toString("base64")}`,
+        {
+          folder,
+          resource_type: "raw",
+          use_filename: true,
+          unique_filename: true,
+        },
+      );
+    } else {
+      const dataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
+      uploadResult = await cloudinary.uploader.upload(dataUri, {
+        folder,
+        resource_type: "image",
+      });
+    }
 
     return NextResponse.json({
-      url: result.secure_url,
-      publicId: result.public_id,
+      url: uploadResult.secure_url,
+      publicId: uploadResult.public_id,
+      resourceType: isPdf ? "raw" : "image",
     });
-  } catch {
+  } catch (error) {
+    console.error("Upload error:", error);
     return NextResponse.json(
-      { error: "Gagal mengunggah gambar. Coba lagi." },
+      { error: "Gagal mengunggah file. Coba lagi." },
       { status: 500 },
     );
   }

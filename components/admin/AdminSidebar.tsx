@@ -16,6 +16,8 @@ import {
   MessageSquare,
   Users,
   Tag,
+  ClipboardList,
+  FileCheck,
   ChevronLeft,
   ChevronRight,
   Menu,
@@ -62,6 +64,13 @@ const menuGroups: MenuGroup[] = [
       { label: "Galeri", href: "/dashboard/galeri", icon: ImageIcon },
       { label: "Profil Desa", href: "/dashboard/profil-desa", icon: Building2 },
       { label: "Infografis", href: "/dashboard/infografis", icon: BarChart3 },
+    ],
+  },
+  {
+    label: "Pelayanan",
+    items: [
+      { label: "Layanan", href: "/dashboard/layanan", icon: ClipboardList },
+      { label: "Permohonan", href: "/dashboard/permohonan", icon: FileCheck },
     ],
   },
   {

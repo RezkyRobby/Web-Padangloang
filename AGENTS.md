@@ -2,7 +2,6 @@
 
 Panduan teknis untuk AI agent dalam membangun Website Profil Desa Padangloang, KKN Universitas Hasanuddin.
 
-
 ## 0. Aturan Kerja Agent
 
 ### 0.1 Eksekusi Per Run
@@ -19,19 +18,20 @@ Panduan teknis untuk AI agent dalam membangun Website Profil Desa Padangloang, K
 | Task Tipe | Prefix | Contoh |
 |---|---|---|
 | Setup/migrasi | `chore:` | `chore: clone repo PortalBeritaKodim dan install dependencies` |
-| Model/schema baru | `feat(db):` | `feat(db): tambah model Desa, PerangkatDesa, UMKM, Wisata, Galeri, Infografis` |
-| Halaman public | `feat(public):` | `feat(public): buat halaman UMKM dan detail produk` |
-| Halaman admin | `feat(admin):` | `feat(admin): tambah CRUD UMKM di dashboard` |
-| API routes | `feat(api):` | `feat(api): tambah API routes untuk Wisata` |
-| Modifikasi | `feat:` | `feat: modifikasi beranda dengan konten desa Padangloang` |
+| Model/schema baru | `feat(db):` | `feat(db): tambah model Layanan, Permohonan, FormField, PermohonanData, ProgressHistory` |
+| Halaman public | `feat(public):` | `feat(public): buat dashboard user untuk tracking pelayanan` |
+| Halaman admin | `feat(admin):` | `feat(admin): tambah CRUD layanan & form builder di dashboard` |
+| API routes | `feat(api):` | `feat(api): tambah API routes untuk Layanan, FormField, Permohonan, Progress` |
+| Modifikasi | `feat:` | `feat: modifikasi model User tambah nik & phoneNumber` |
 | Testing | `test:` | `test: testing end-to-end semua CRUD` |
 | Deploy | `deploy:` | `deploy: konfigurasi Vercel dan deploy` |
 
-- Contoh perintah:
+- Contoh perintah (Wajib dipisah, jangan digabung dengan `&&`):
   ```bash
   git add -A
-  git commit -m "feat(api): tambah API routes untuk UMKM (list, create, get, update, delete)"
+  git commit -m "feat(api): tambah API routes untuk Layanan (list, create, get, update, delete)"
   ```
+  **Catatan:** Perintah `git add` dan `git commit` harus dijalankan **satu per satu (dua baris terpisah)**. Jangan digabung dengan `&&` karena tidak berfungsi di environment shell ini.
 
 ### 0.3 Verifikasi Per Task
 Sebelum commit, pastikan:
@@ -60,10 +60,10 @@ Task berikut memiliki dependensi dan TIDAK BOLEH dikerjakan sebelum dependensiny
 |---|---|
 | Migrasi database (Task 4) | Schema Prisma harus selesai (Task 3) |
 | Seed data (Task 5) | Migrasi harus selesai (Task 4) |
-| Semua API routes (Task 16) | Migrasi harus selesai (Task 4) |
+| Semua API routes (Task 16, 28) | Migrasi harus selesai (Task 4) |
 | Halaman public yang panggil DB (semua halaman di Fase 2) | API routes atau Prisma query harus siap |
-| Halaman admin CRUD (Task 18-22) | API routes harus selesai (Task 16) |
-| Testing (Task 23) | Semua halaman public dan admin harus selesai |
+| Halaman admin CRUD (Task 18-22, 29-31) | API routes harus selesai (Task 16, 28) |
+| Testing (Task 23, 32) | Semua halaman public dan admin harus selesai |
 
 ### 0.5 Akhir Run — Wajib Lapor
 Setelah commit, laporkan:
@@ -85,26 +85,25 @@ Setiap task WAJIB dikonfirmasi keberhasilannya sebelum dianggap selesai.
 
 **Kriteria task GAGAL:**
 - Ada error yang tidak bisa diperbaiki dalam run ini
-- Exit code command ≠ 0
+- Exit code command != 0
 - Verifikasi gagal dan tidak ada solusi langsung
 
 **Jika task SUKSES:**
-```laporan
-✅ Task X selesai — [nama task]
+```
+OK Task X selesai — [nama task]
 - Commit: [hash commit]
-- Verifikasi: TS ✅ | Lint ✅ | Build ✅
+- Verifikasi: TS OK | Lint OK | Build OK
 - File diubah: [daftar file]
 - Task selanjutnya: [task Y]
 ```
 
 **Jika task GAGAL:**
-```laporan
-❌ Task X gagal — [nama task]
+```
+X Task X gagal — [nama task]
 - Error: [detail error]
 - Langkah yang sudah dicoba: [deskripsi]
 ```
 Jangan commit jika task gagal. Laporkan error dan tunggu arahan.
-
 
 ## 1. Sumber Kode (Base Repository)
 
@@ -143,6 +142,7 @@ KKN/
 | Auth | Better-Auth | 1.x |
 | Rich Text | TipTap (ProseMirror) | 3.x |
 | Image Upload | Cloudinary | 2.x |
+| Email | Nodemailer + Gmail SMTP | latest |
 | Icons | Lucide React | 0.x |
 | Forms | Zod | 4.x |
 
@@ -157,6 +157,13 @@ BETTER_AUTH_SECRET="..."
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="..."
 CLOUDINARY_API_KEY="..."
 CLOUDINARY_API_SECRET="..."
+
+# Konfigurasi Email (Gmail SMTP)
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_USER="desapadangloang@gmail.com"
+SMTP_PASS="app-password-gmail"
+SMTP_FROM="desapadangloang@gmail.com"
 ```
 
 ### 3.2 Database
@@ -171,14 +178,14 @@ npx prisma db seed  # jika ada seed
 ## 4. Struktur Database — Perubahan dari PortalBeritaKodim
 
 ### 4.1 Model yang SUDAH ADA (bisa langsung dipakai)
-- `User` — autentikasi + role (ADMIN, EDITOR)
+- `User` — autentikasi + role (USER, ADMIN, EDITOR)
 - `Session`, `Account`, `Verification` (Better-Auth)
 - `Post` — untuk berita desa (judul, slug, konten, gambar, category, trending, published)
 - `Category` — kategori berita
 - `BreakingNews` — pengumuman darurat/breaking news
 - `Message` — kontak/pesan dari pengunjung
 
-### 4.2 Model yang HARUS DITAMBAHKAN
+### 4.2 Model yang SUDAH DITAMBAHKAN
 
 ```prisma
 model Desa {
@@ -230,14 +237,14 @@ model UMKM {
 }
 
 model Wisata {
-  id         String   @id @default(cuid())
+  id         String         @id @default(cuid())
   nama       String
-  deskripsi  String   @db.Text
+  deskripsi  String         @db.Text
   lokasi     String
   kategori   WisataKategori
   gambar     String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
 
   @@map("wisata")
 }
@@ -262,14 +269,145 @@ model Galeri {
 }
 
 model Infografis {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   judul     String
   tahun     Int
   dataJson  Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  chartType ChartType @default(BAR_CHART)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("infografis")
+}
+
+enum ChartType {
+  BAR_CHART
+  LINE_CHART
+  PIE_CHART
+  DOUGHNUT_CHART
+  AREA_CHART
+  STAT_CARDS
+}
+```
+
+### 4.3 Model yang HARUS DITAMBAHKAN (Fase 5 — Tracking Pelayanan)
+
+**Warning: Modifikasi `User`:**
+Tambahkan field `nik` dan `phoneNumber` ke model `User`:
+```prisma
+model User {
+  // ... existing fields ...
+  nik         String?
+  phoneNumber String?
+  permohonan  Permohonan[]
+  progress    ProgressHistory[]
+}
+```
+
+**Model Baru:**
+```prisma
+enum StatusPermohonan {
+  MENUNGGU
+  DIPROSES
+  SELESAI
+  DITOLAK
+  DITANGGUHKAN
+  DIBATALKAN
+}
+
+enum JenisAjuan {
+  ONLINE
+  OFFLINE
+}
+
+enum FieldType {
+  TEXT
+  NUMBER
+  TEXTAREA
+  DATE
+  FILE_UPLOAD
+  SELECT
+  RADIO
+  CHECKBOX
+}
+
+model Layanan {
+  id           String   @id @default(cuid())
+  nama         String
+  deskripsi    String?  @db.Text
+  icon         String?
+  isActive     Boolean  @default(true)
+  hanyaOffline Boolean  @default(false)
+  persyaratan  Json?                      // Array string: ["KTP", "KK", "Surat Pengantar RT"]
+  templateFile String?                    // Cloudinary URL template (PDF)
+  formFields   FormField[]
+  permohonan   Permohonan[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("layanan")
+}
+
+model FormField {
+  id          String    @id @default(cuid())
+  layananId   String
+  layanan     Layanan   @relation(fields: [layananId], references: [id], onDelete: Cascade)
+  label       String
+  fieldType   FieldType
+  required    Boolean   @default(false)
+  placeholder String?
+  options     Json?                       // Untuk SELECT/RADIO/CHECKBOX: ["Pilihan 1", "Pilihan 2"]
+  urutan      Int       @default(0)
+  data        PermohonanData[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("form_field")
+}
+
+model Permohonan {
+  id           String           @id @default(cuid())
+  nomorTiket   String           @unique   // Format: PL-YYYYMMDD-XXX
+  layananId    String?
+  layanan      Layanan?         @relation(fields: [layananId], references: [id])
+  userId       String
+  user         User             @relation(fields: [userId], references: [id])
+  jenisAjuan   JenisAjuan
+  status       StatusPermohonan @default(MENUNGGU)
+  catatan      String?          @db.Text
+  data         PermohonanData[]
+  progress     ProgressHistory[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([userId])
+  @@map("permohonan")
+}
+
+model PermohonanData {
+  id           String      @id @default(cuid())
+  permohonanId String
+  permohonan   Permohonan  @relation(fields: [permohonanId], references: [id], onDelete: Cascade)
+  formFieldId  String
+  formField    FormField   @relation(fields: [formFieldId], references: [id])
+  value        String      @db.Text    // Teks atau Cloudinary URL (FILE_UPLOAD)
+
+  @@index([permohonanId])
+  @@map("permohonan_data")
+}
+
+model ProgressHistory {
+  id           String           @id @default(cuid())
+  permohonanId String
+  permohonan   Permohonan       @relation(fields: [permohonanId], references: [id], onDelete: Cascade)
+  status       StatusPermohonan
+  catatan      String?          @db.Text
+  createdById  String
+  createdBy    User             @relation(fields: [createdById], references: [id])
+  createdAt    DateTime         @default(now())
+
+  @@index([permohonanId])
+  @@map("progress_history")
 }
 ```
 
@@ -283,7 +421,7 @@ model Infografis {
   - Tambah section statistik desa (luas wilayah, penduduk, KK, dusun)
   - Featured UMKM & Wisata (query terbaru)
   - Galeri foto grid
-  - Breaking news → pengumuman desa
+  - Breaking news -> pengumuman desa
 
 ### 5.2 Profil (`app/profil/`)
 - Modifikasi menjadi profil Desa Padangloang
@@ -301,7 +439,7 @@ model Infografis {
 - Halaman public: sudah OK, sesuaikan query & tampilan
 - Halaman admin CRUD: sudah OK, sesuaikan label & field
 
-### 5.6 Aduan (`app/aduan/`) → Kontak
+### 5.6 Aduan (`app/aduan/`) -> Kontak
 - Ubah menjadi halaman Kontak & Lokasi
 - Tambah Google Maps embed
 - Link WhatsApp kantor desa
@@ -312,6 +450,22 @@ model Infografis {
 ### 5.8 Dashboard (`app/dashboard/`)
 - Modifikasi overview dengan data desa
 - Tambah menu CRUD UMKM, Wisata, Galeri, Infografis
+- Tambah menu Layanan & Permohonan (Fase 5)
+- Tambah card ringkasan permohonan (total, menunggu, diproses, selesai)
+
+### 5.9 Akun User (`app/akun/`)
+- Modifikasi menjadi Dashboard User (Fase 5)
+- Tambah halaman: profil (edit NIK, telepon), daftar permohonan, detail tracking, pengajuan baru
+
+### 5.10 Alur Pengajuan Layanan (User)
+
+**Halaman Pengajuan Baru (`/akun/dashboard/ajukan`):**
+1. User memilih **layanan** yang diinginkan dari daftar layanan yang tersedia
+2. Sistem akan menampilkan **persyaratan/dokumen** yang perlu disiapkan (dari field `Layanan.persyaratan`, contoh: ["KTP", "KK", "Surat Pengantar RT"])
+3. User bisa **mendownload template PDF** jika admin menyediakan (`Layanan.templateFile`)
+4. Setelah memahami persyaratan, user memilih **jenis ajuan**:
+   - **OFFLINE (Datang ke Kantor Desa)**: User cukup memencet tombol — ticket otomatis dibuat dengan nomor seri — user datang langsung ke kantor desa dengan membawa berkas persyaratan — admin yang akan mengisi form dan meng-update progress di dashboard
+   - **ONLINE (Isi Mandiri)**: User mengisi form dinamis yang sudah disiapkan admin (seperti Google Form) — upload dokumen yang diperlukan — submit — admin akan memverifikasi, mengonfirmasi, dan melakukan follow-up progress
 
 ---
 
@@ -343,11 +497,32 @@ model Infografis {
 | `/dashboard/profil-desa` | `app/dashboard/profil-desa/page.tsx` | Edit data desa & perangkat |
 | `/dashboard/infografis` | `app/dashboard/infografis/page.tsx` | Kelola data infografis |
 
+### 6.3 Admin Pages — Tracking Pelayanan (Fase 5)
+
+| Route | File | Keterangan |
+|---|---|---|
+| `/dashboard/layanan` | `app/dashboard/layanan/page.tsx` | List layanan + CRUD |
+| `/dashboard/layanan/new` | `app/dashboard/layanan/new/page.tsx` | Tambah layanan (upload template file) |
+| `/dashboard/layanan/[id]/edit` | `app/dashboard/layanan/[id]/edit/page.tsx` | Edit layanan |
+| `/dashboard/layanan/[id]/form` | `app/dashboard/layanan/[id]/form/page.tsx` | Form builder — kelola FormField |
+| `/dashboard/permohonan` | `app/dashboard/permohonan/page.tsx` | Semua ticket (filter status/layanan/tanggal, search) |
+| `/dashboard/permohonan/[id]` | `app/dashboard/permohonan/[id]/page.tsx` | Detail ticket: pilih layanan (offline) + isi form + update status + progress history |
+
+### 6.4 User Dashboard Pages — Tracking Pelayanan (Fase 5)
+
+| Route | File | Keterangan |
+|---|---|---|
+| `/akun/dashboard` | `app/akun/dashboard/page.tsx` | Dashboard user: profil ringkas + 5 permohonan terbaru + tombol ajukan |
+| `/akun/dashboard/profil` | `app/akun/dashboard/profil/page.tsx` | Edit data diri (NIK, telepon) — wajib diisi sebelum pengajuan online |
+| `/akun/dashboard/permohonan` | `app/akun/dashboard/permohonan/page.tsx` | Riwayat semua permohonan user |
+| `/akun/dashboard/permohonan/[id]` | `app/akun/dashboard/permohonan/[id]/page.tsx` | Detail tracking + timeline progress + tombol batalkan (jika MENUNGGU) |
+| `/akun/dashboard/ajukan` | `app/akun/dashboard/ajukan/page.tsx` | Pilih layanan, lihat persyaratan, pilih offline/online, isi form dinamis (online) / buat ticket langsung (offline), submit |
+
 ---
 
 ## 7. API Routes
 
-### 7.1 Route yang perlu ditambahkan
+### 7.1 Route yang perlu ditambahkan (Fase 1-4)
 
 ```
 app/api/
@@ -377,7 +552,33 @@ app/api/
     └── route.ts           # Upload gambar ke Cloudinary
 ```
 
-### 7.2 Pattern API Route (contoh)
+### 7.2 Route yang perlu ditambahkan (Fase 5 — Tracking Pelayanan)
+
+```
+app/api/
+├── layanan/
+│   ├── route.ts              # GET (list, only isActive), POST
+│   └── [id]/
+│       ├── route.ts          # GET, PUT, DELETE
+│       └── form-fields/
+│           ├── route.ts      # GET (list fields), POST (create)
+│           └── [fieldId]/
+│               └── route.ts  # PUT, DELETE
+├── permohonan/
+│   ├── route.ts              # GET (list + filter), POST (create)
+│   └── [id]/
+│       ├── route.ts          # GET, PUT (update status/layanan)
+│       └── progress/
+│           └── route.ts      # GET (list), POST (create)
+├── user/
+│   └── profile/
+│       └── route.ts          # GET, PUT (nik, phoneNumber)
+└── email/
+    └── send/
+        └── route.ts          # POST (send email via Nodemailer Gmail SMTP)
+```
+
+### 7.3 Pattern API Route (contoh)
 
 ```ts
 import { NextRequest, NextResponse } from "next/server";
@@ -390,7 +591,7 @@ export async function GET() {
     });
     return NextResponse.json(data);
   } catch (error) {
-    console.error(error); // Log error untuk debugging
+    console.error(error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -401,7 +602,49 @@ export async function POST(req: NextRequest) {
     const data = await prisma.uMKM.create({ data: body });
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error(error); // Log error untuk debugging
+    console.error(error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
+```
+
+### 7.4 API Permohonan — Create (Khusus)
+
+```ts
+// POST /api/permohonan
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { layananId, jenisAjuan, formData } = body;
+    // formData: [{ formFieldId: "xxx", value: "isi" }, ...]
+
+    // Generate nomor tiket
+    const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const count = await prisma.permohonan.count({
+      where: { nomorTiket: { startsWith: `PL-${today}` } },
+    });
+    const nomorTiket = `PL-${today}-${String(count + 1).padStart(3, "0")}`;
+
+    const permohonan = await prisma.permohonan.create({
+      data: {
+        nomorTiket,
+        layananId: layananId || null,
+        userId: body.userId,
+        jenisAjuan,
+        status: "MENUNGGU",
+        data: {
+          create: formData.map((fd: { formFieldId: string; value: string }) => ({
+            formFieldId: fd.formFieldId,
+            value: fd.value,
+          })),
+        },
+      },
+      include: { data: true },
+    });
+
+    return NextResponse.json(permohonan, { status: 201 });
+  } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -409,7 +652,7 @@ export async function POST(req: NextRequest) {
 
 ---
 
-## 8. Urutan Pengerjaan (2 Minggu)
+## 8. Urutan Pengerjaan (3 Minggu)
 
 **Progress tracker:** Agent wajib mengubah `[ ]` menjadi `[x]` setelah setiap task selesai.
 
@@ -454,6 +697,49 @@ export async function POST(req: NextRequest) {
 - [ ] 26. Deploy ke Vercel
 - [ ] 27. Dokumentasi serah terima ke perangkat desa
 
+### Fase 5 — Tracking Pelayanan (Hari 15–19)
+
+#### 5A — Database & Setup
+- [x] 28a. Tambah model Layanan, FormField, Permohonan, PermohonanData, ProgressHistory + enum StatusPermohonan, JenisAjuan, FieldType ke prisma/schema.prisma
+- [x] 28b. Modifikasi model User: tambah field nik String? dan phoneNumber String? + relasi permohonan Permohonan[] dan progress ProgressHistory[]
+- [x] 28c. Jalankan migrasi: npx prisma migrate dev --name add_layanan_models
+- [x] 28d. Buat seed data layanan contoh (KK, Surat Tanah, Surat Keterangan Domisili) dengan form fields masing-masing
+
+#### 5B — API Routes
+- [x] 28e. API routes untuk Layanan (list, create, get, update, delete)
+- [x] 28f. API routes untuk FormField per Layanan (list, create, get, update, delete)
+- [x] 28g. API routes untuk Permohonan (list + filter, create + generate nomor tiket)
+- [x] 28h. API routes untuk ProgressHistory per Permohonan (list, create)
+- [x] 28i. API route untuk user profile (GET, PUT: nik, phoneNumber)
+- [x] 28j. API route untuk kirim email (POST: nodemailer Gmail SMTP)
+
+#### 5C — Dashboard User
+- [x] 29a. Buat halaman dashboard user (/akun/dashboard): profil ringkas + 5 permohonan terbaru + tombol ajukan
+- [x] 29b. Buat halaman edit profil user (/akun/dashboard/profil): edit NIK, telepon
+- [x] 29c. Buat halaman riwayat permohonan user (/akun/dashboard/permohonan)
+- [x] 29d. Buat halaman detail tracking permohonan user (/akun/dashboard/permohonan/[id]): timeline progress + tombol batalkan jika MENUNGGU
+- [x] 29e. Buat halaman pengajuan baru (/akun/dashboard/ajukan): pilih layanan, lihat persyaratan, pilih offline/online, isi form dinamis (online) / buat ticket langsung (offline), submit
+
+#### 5D — Admin Panel Pelayanan
+- [x] 30a. Buat halaman CRUD Layanan (/dashboard/layanan): list + new + edit + tambah model Persyaratan (contohGambar & templateFile per item), update form builder dengan tab persyaratan, update halaman ajukan user tampilkan card persyaratan
+- [x] 30b. Buat halaman Form Builder (/dashboard/layanan/[id]/form): kelola FormField
+- [x] 30c. Buat halaman daftar permohonan (/dashboard/permohonan): filter status/layanan/tanggal, search
+- [x] 30d. Buat halaman detail permohonan admin (/dashboard/permohonan/[id])
+
+#### 5E — Integrasi
+- [x] 31a. Update dashboard admin overview: card ringkasan permohonan
+- [x] 31b. Update AdminSidebar: menu Layanan & Permohonan
+- [ ] 31c. Kirim email notifikasi SELESAI/DITOLAK (Nodemailer)
+- [ ] 31d. In-web notifikasi toast (sonner)
+
+#### 5F — Testing
+- [ ] 32a. Testing flow pengajuan online
+- [ ] 32b. Testing flow pengajuan offline
+- [ ] 32c. Testing CRUD layanan & form builder
+- [ ] 32d. Testing email notifikasi
+- [ ] 32e. Testing batalkan ticket
+
+---
 
 ## 9. Konvensi Coding
 
@@ -607,6 +893,7 @@ Floating navigation island (Graphite Night #282834, pill-shaped 50px+ radius, ce
 | Dark mode flicker | Pastikan `next-themes` `ThemeProvider` di root layout |
 | Image broken | Cek URL Cloudinary atau gunakan fallback image |
 | Next.js build error | Cek `npx prisma migrate deploy` di `package.json` build script |
+| `git add -A && git commit` gagal | Jalankan `git add -A` dan `git commit -m "..."` secara terpisah (dua perintah terpisah), jangan digabung dengan `&&` |
 
 ---
 
