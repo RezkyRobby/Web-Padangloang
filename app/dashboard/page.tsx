@@ -33,6 +33,8 @@ import {
   Map,
   Sparkles,
   Plus,
+  Inbox,
+  Loader2,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -66,6 +68,11 @@ async function getDashboardStats() {
     totalGaleri,
     totalInfografis,
     totalPerangkatDesa,
+    // Permohonan stats
+    totalPermohonan,
+    permohonanMenunggu,
+    permohonanDiproses,
+    permohonanSelesai,
     recentPosts,
     recentMessages,
   ] = await Promise.all([
@@ -84,6 +91,12 @@ async function getDashboardStats() {
     prisma.galeri.count().catch(() => 0),
     prisma.infografis.count().catch(() => 0),
     prisma.perangkatDesa.count().catch(() => 0),
+
+    // ── Permohonan stats ──
+    prisma.permohonan.count().catch(() => 0),
+    prisma.permohonan.count({ where: { status: "MENUNGGU" } }).catch(() => 0),
+    prisma.permohonan.count({ where: { status: "DIPROSES" } }).catch(() => 0),
+    prisma.permohonan.count({ where: { status: "SELESAI" } }).catch(() => 0),
 
     // 5 most recent posts
     prisma.post.findMany({
@@ -133,6 +146,10 @@ async function getDashboardStats() {
     totalGaleri,
     totalInfografis,
     totalPerangkatDesa,
+    totalPermohonan,
+    permohonanMenunggu,
+    permohonanDiproses,
+    permohonanSelesai,
     recentPosts,
     recentMessages,
   };
@@ -478,6 +495,103 @@ export default async function DashboardPage() {
               <p className="text-[11px] text-muted-foreground">Jumlah Penduduk</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ── Ringkasan Permohonan ─────────────────────────────────────────────── */}
+      <section>
+        <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+          <Inbox className="size-3.5" />
+          Ringkasan Permohonan
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Link href="/dashboard/permohonan">
+            <Card className="group relative overflow-hidden border-sage dark:border-[#414943] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-500/10 to-slate-500/5 dark:from-slate-500/20 dark:to-slate-500/10" />
+              <CardHeader className="relative flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Total Permohonan
+                </CardTitle>
+                <span className="flex size-9 items-center justify-center rounded-lg bg-muted transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110">
+                  <Inbox className="size-4" />
+                </span>
+              </CardHeader>
+              <CardContent className="relative">
+                <p className="text-3xl font-extrabold text-foreground">
+                  {formatNumber(stats.totalPermohonan)}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Seluruh permohonan masuk
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/dashboard/permohonan?status=MENUNGGU">
+            <Card className="group relative overflow-hidden border-sage dark:border-[#414943] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-amber-500/5 dark:from-amber-500/20 dark:to-amber-500/10" />
+              <CardHeader className="relative flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Menunggu
+                </CardTitle>
+                <span className="flex size-9 items-center justify-center rounded-lg bg-muted transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110">
+                  <Clock className="size-4" />
+                </span>
+              </CardHeader>
+              <CardContent className="relative">
+                <p className="text-3xl font-extrabold text-foreground">
+                  {formatNumber(stats.permohonanMenunggu)}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Belum diproses
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/dashboard/permohonan?status=DIPROSES">
+            <Card className="group relative overflow-hidden border-sage dark:border-[#414943] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-500/5 dark:from-blue-500/20 dark:to-blue-500/10" />
+              <CardHeader className="relative flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Diproses
+                </CardTitle>
+                <span className="flex size-9 items-center justify-center rounded-lg bg-muted transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110">
+                  <Loader2 className="size-4 animate-spin" />
+                </span>
+              </CardHeader>
+              <CardContent className="relative">
+                <p className="text-3xl font-extrabold text-foreground">
+                  {formatNumber(stats.permohonanDiproses)}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Sedang dikerjakan
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/dashboard/permohonan?status=SELESAI">
+            <Card className="group relative overflow-hidden border-sage dark:border-[#414943] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 dark:from-emerald-500/20 dark:to-emerald-500/10" />
+              <CardHeader className="relative flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Selesai
+                </CardTitle>
+                <span className="flex size-9 items-center justify-center rounded-lg bg-muted transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110">
+                  <CheckCircle2 className="size-4" />
+                </span>
+              </CardHeader>
+              <CardContent className="relative">
+                <p className="text-3xl font-extrabold text-foreground">
+                  {formatNumber(stats.permohonanSelesai)}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Permohonan selesai
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </section>
 

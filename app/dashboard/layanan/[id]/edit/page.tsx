@@ -13,6 +13,9 @@ import {
   FileText,
   Plus,
   Pencil,
+  Download,
+  ExternalLink,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 

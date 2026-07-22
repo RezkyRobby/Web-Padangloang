@@ -18,6 +18,7 @@ import {
   FileText,
   ImageIcon,
   Download,
+  ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -1155,22 +1156,22 @@ export default function FormBuilderPage() {
       </Dialog>
       {/* ── Preview Modal ── */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent className="sm:max-w-3xl">
+        <DialogContent className="sm:max-w-4xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FileText className="size-5" />
               {previewNama}
             </DialogTitle>
             <DialogDescription>
-              Preview file — klik Download untuk menyimpan berkas.
+              Lihat pratinjau berkas — klik Download jika ingin menyimpan.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex items-center justify-center rounded-lg border bg-muted/50 min-h-[300px] max-h-[60vh] overflow-hidden">
+          <div className="relative flex items-center justify-center rounded-lg border bg-muted/50 min-h-[300px] max-h-[65vh] overflow-hidden">
             {previewUrl ? (
               <iframe
-                src={previewUrl + "#toolbar=1"}
-                className="w-full h-[60vh] rounded-lg"
+                src={`https://docs.google.com/viewer?url=${encodeURIComponent(previewUrl)}&embedded=true`}
+                className="w-full h-[65vh] rounded-lg"
                 title={`Preview ${previewNama}`}
               />
             ) : (
@@ -1181,18 +1182,28 @@ export default function FormBuilderPage() {
             )}
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setPreviewOpen(false)}>
-              Tutup
+          <DialogFooter className="flex-col gap-2 sm:flex-row">
+            <Button
+              variant="outline"
+              onClick={() => window.open(previewUrl, "_blank")}
+              className="gap-2"
+            >
+              <ExternalLink className="size-4" />
+              Buka di Tab Baru
             </Button>
-            <Button onClick={handleDownload} disabled={downloading} className="gap-2">
-              {downloading ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Download className="size-4" />
-              )}
-              Download Berkas (.pdf)
-            </Button>
+            <div className="flex gap-2 ml-auto">
+              <Button variant="outline" onClick={() => setPreviewOpen(false)}>
+                Tutup
+              </Button>
+              <Button onClick={handleDownload} disabled={downloading} className="gap-2">
+                {downloading ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Download className="size-4" />
+                )}
+                Download Berkas (.pdf)
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
