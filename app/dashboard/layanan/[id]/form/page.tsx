@@ -17,6 +17,7 @@ import {
   X,
   FileText,
   ImageIcon,
+  Download,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -236,6 +237,42 @@ export default function FormBuilderPage() {
   const [persyaratanUrutan, setPersyaratanUrutan] = useState(0);
   const [uploadingGambar, setUploadingGambar] = useState(false);
   const [uploadingTemplate, setUploadingTemplate] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
+  // ── Preview state ────────────────────────────────────────────────────────────
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [previewNama, setPreviewNama] = useState("");
+
+  // ── Preview + Download ──────────────────────────────────────────────────────
+
+  const openPreview = (url: string, nama: string) => {
+    setPreviewUrl(url);
+    setPreviewNama(nama);
+    setPreviewOpen(true);
+  };
+
+  const handleDownload = useCallback(async () => {
+    if (!previewUrl) return;
+    setDownloading(true);
+    try {
+      const response = await fetch(previewUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      const cleanName = previewNama.replace(/[^a-zA-Z0-9-_]/g, "_");
+      a.download = `${cleanName}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      toast.error("Gagal mendownload berkas");
+    } finally {
+      setDownloading(false);
+    }
+  }, [previewUrl, previewNama]);
 
   // ── Fetch ──────────────────────────────────────────────────────────────────
 
@@ -754,9 +791,18 @@ export default function FormBuilderPage() {
                       </TableCell>
                       <TableCell>
                         {p.templateFile ? (
-                          <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400 text-[11px] font-medium">
-                            <FileText className="mr-1 size-3" /> Ada
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400 text-[11px] font-medium">
+                              <FileText className="mr-1 size-3" /> Ada
+                            </Badge>
+                            <button
+                              type="button"
+                              onClick={() => openPreview(p.templateFile!, p.nama)}
+                              className="text-[11px] text-primary hover:underline font-medium"
+                            >
+                              Preview
+                            </button>
+                          </div>
                         ) : (
                           <span className="text-sm text-muted-foreground">—</span>
                         )}
@@ -1103,6 +1149,49 @@ export default function FormBuilderPage() {
             <Button variant="destructive" onClick={handlePersyaratanDelete} disabled={deleting} className="gap-2">
               {deleting && <Loader2 className="size-4 animate-spin" />}
               Hapus
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* ── Preview Modal ── */}
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="size-5" />
+              {previewNama}
+            </DialogTitle>
+            <DialogDescription>
+              Preview file — klik Download untuk menyimpan berkas.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex items-center justify-center rounded-lg border bg-muted/50 min-h-[300px] max-h-[60vh] overflow-hidden">
+            {previewUrl ? (
+              <iframe
+                src={previewUrl + "#toolbar=1"}
+                className="w-full h-[60vh] rounded-lg"
+                title={`Preview ${previewNama}`}
+              />
+            ) : (
+              <div className="flex flex-col items-center gap-2 py-12 text-foreground/40">
+                <FileText className="size-12" />
+                <p className="text-sm">Tidak ada file untuk dipreview</p>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPreviewOpen(false)}>
+              Tutup
+            </Button>
+            <Button onClick={handleDownload} disabled={downloading} className="gap-2">
+              {downloading ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Download className="size-4" />
+              )}
+              Download Berkas (.pdf)
             </Button>
           </DialogFooter>
         </DialogContent>

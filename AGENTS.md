@@ -721,7 +721,7 @@ export async function POST(req: NextRequest) {
 - [x] 29e. Buat halaman pengajuan baru (/akun/dashboard/ajukan): pilih layanan, lihat persyaratan, pilih offline/online, isi form dinamis (online) / buat ticket langsung (offline), submit
 
 #### 5D — Admin Panel Pelayanan
-- [x] 30a. Buat halaman CRUD Layanan (/dashboard/layanan): list + new + edit
+- [x] 30a. Buat halaman CRUD Layanan (/dashboard/layanan): list + new + edit + tambah model Persyaratan (contohGambar & templateFile per item), update form builder dengan tab persyaratan, update halaman ajukan user tampilkan card persyaratan
 - [x] 30b. Buat halaman Form Builder (/dashboard/layanan/[id]/form): kelola FormField
 - [x] 30c. Buat halaman daftar permohonan (/dashboard/permohonan): filter status/layanan/tanggal, search
 - [x] 30d. Buat halaman detail permohonan admin (/dashboard/permohonan/[id])
