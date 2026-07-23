@@ -187,8 +187,8 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                 <DropdownMenuTrigger asChild>
                   <button
                     className={cn(
-                      "flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-semibold text-white transition-colors outline-none hover:bg-white/10",
-                      dropdownActive && "bg-white/15",
+                      "flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-semibold text-[#171717] transition-colors outline-none hover:bg-black/5 dark:text-white dark:hover:bg-white/10",
+                      dropdownActive && "bg-black/10 dark:bg-white/15",
                     )}
                   >
                     {link.label}
@@ -197,7 +197,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="start"
-                  className="min-w-48 border border-[#dee2de] bg-white p-1 shadow-lg"
+                  className="min-w-48 border border-[#dee2de]/30 bg-white/90 backdrop-blur-md dark:border-white/10 dark:bg-[#282834]/90"
                 >
                   <DropdownMenuGroup>
                     {link.children.map((child) => {
@@ -208,11 +208,11 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                           <Link
                             href={child.href}
                             className={cn(
-                              "flex items-center gap-3 px-4 py-3 text-[13px] font-semibold text-[#282834] hover:bg-[#f9faf7]",
-                              childActive && "!bg-[#f9faf7] font-bold",
+                              "flex items-center gap-3 px-4 py-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-[#f9faf7] dark:text-white dark:hover:bg-white/10",
+                              childActive && "!bg-[#f9faf7] font-bold dark:!bg-white/15",
                             )}
                           >
-                            <ChildIcon className="size-4 shrink-0 text-[#282834]/60" />
+                            <ChildIcon className="size-4 shrink-0 text-[#282834]/60 dark:text-white/60" />
                             {child.label}
                           </Link>
                         </DropdownMenuItem>
@@ -231,8 +231,8 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
             <Link
               href={link.href}
               className={cn(
-                "flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-white/10",
-                active && "bg-white/15",
+                "flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-semibold text-[#171717] transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/10",
+                active && "bg-black/10 dark:bg-white/15",
               )}
             >
               {link.label}
@@ -261,29 +261,30 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
       {/* Drawer */}
       <div
         className={cn(
-          "absolute right-0 top-0 h-full w-72 bg-[#282834] shadow-xl transition-transform duration-300",
+          "absolute right-0 top-0 h-full w-72 bg-white/95 shadow-xl backdrop-blur-xl transition-transform duration-300 dark:bg-[#282834]/95",
           mobileOpen ? "translate-x-0" : "translate-x-full",
         )}
       >
         <div className="flex h-full flex-col">
           {/* Drawer Header */}
-          <div className="flex items-center justify-between border-b border-white/10 p-4">
+          <div className="flex items-center justify-between border-b border-[#dee2de]/20 p-4 dark:border-white/10">
             <div className="flex items-center gap-3">
               <Image
                 src="/logo.png"
                 alt="Logo"
                 width={32}
                 height={32}
-                className="rounded-sm object-contain brightness-0 invert"
+                className="rounded-sm object-contain dark:brightness-0 dark:invert"
+                priority
               />
-              <span className="text-[15px] font-extrabold text-white">
+              <span className="text-[15px] font-extrabold text-[#171717] dark:text-white">
                 Desa Padangloang
               </span>
             </div>
             <Button
               variant="ghost"
               size="icon"
-              className="text-white hover:bg-white/10"
+              className="text-[#171717] hover:bg-black/5 dark:text-white dark:hover:bg-white/10"
               onClick={() => setMobileOpen(false)}
             >
               <X className="size-5" />
@@ -300,12 +301,12 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                     <li key={link.href}>
                       <button
                         onClick={() => toggleMobileDropdown(link.label)}
-                        className="flex w-full items-center justify-between rounded-md px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                        className="flex w-full items-center justify-between rounded-md px-4 py-3 text-sm font-semibold text-[#171717] transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/10"
                       >
                         {link.label}
                         <ChevronDown
                           className={cn(
-                            "size-4 transition-transform",
+                            "size-4 text-[#171717]/60 transition-transform dark:text-white/60",
                             isOpen && "rotate-180",
                           )}
                         />
@@ -316,7 +317,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                           isOpen ? "max-h-60" : "max-h-0",
                         )}
                       >
-                        <ul className="ml-2 flex flex-col gap-0.5 border-l-2 border-white/10 pl-3 pt-1">
+                        <ul className="ml-2 flex flex-col gap-0.5 border-l-2 border-[#dee2de]/30 pl-3 pt-1 dark:border-white/10">
                           {link.children.map((child) => {
                             const childActive = pathname === child.href;
                             const ChildIcon = child.icon;
@@ -329,12 +330,12 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                                     setMobileDropdownOpen(null);
                                   }}
                                   className={cn(
-                                    "flex items-center gap-3 rounded-md px-4 py-2.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white",
+                                    "flex items-center gap-3 rounded-md px-4 py-2.5 text-sm font-medium text-[#171717]/80 transition-colors hover:bg-black/5 hover:text-[#171717] dark:text-white/80 dark:hover:bg-white/10 dark:hover:text-white",
                                     childActive &&
-                                      "bg-white/15 font-semibold text-white",
+                                      "bg-black/10 font-semibold text-[#171717] dark:bg-white/15 dark:text-white",
                                   )}
                                 >
-                                  <ChildIcon className="size-4 shrink-0 text-white/60" />
+                                  <ChildIcon className="size-4 shrink-0 text-[#171717]/60 dark:text-white/60" />
                                   {child.label}
                                 </Link>
                               </li>
@@ -355,8 +356,8 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
                       className={cn(
-                        "flex items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10",
-                        active && "bg-white/15",
+                        "flex items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-[#171717] transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/10",
+                        active && "bg-black/10 dark:bg-white/15",
                       )}
                     >
                       {link.label}
@@ -368,13 +369,13 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
               {/* User menu di mobile drawer */}
               {session?.user && (
                 <>
-                  <li className="mt-2 border-t border-white/10 pt-2">
+                  <li className="mt-2 border-t border-[#dee2de]/20 pt-2 dark:border-white/10">
                     <Link
                       href="/akun/dashboard"
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                      className="flex items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-[#171717] transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/10"
                     >
-                      <LayoutDashboard className="size-4 shrink-0 text-white/60" />
+                      <LayoutDashboard className="size-4 shrink-0 text-[#171717]/60 dark:text-white/60" />
                       Dashboard Saya
                     </Link>
                   </li>
@@ -382,9 +383,9 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                     <Link
                       href={`/akun/${session.user.id}`}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                      className="flex items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-[#171717] transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/10"
                     >
-                      <User className="size-4 shrink-0 text-white/60" />
+                      <User className="size-4 shrink-0 text-[#171717]/60 dark:text-white/60" />
                       Profil
                     </Link>
                   </li>
@@ -394,9 +395,9 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                         setMobileOpen(false);
                         handleSignOut();
                       }}
-                      className="flex w-full items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                      className="flex w-full items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-[#171717] transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/10"
                     >
-                      <LogOut className="size-4 shrink-0 text-white/60" />
+                      <LogOut className="size-4 shrink-0 text-[#171717]/60 dark:text-white/60" />
                       Keluar
                     </button>
                   </li>
@@ -406,7 +407,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
           </div>
 
           {/* Drawer Footer */}
-          <div className="border-t border-white/10 p-4">
+          <div className="border-t border-[#dee2de]/20 p-4 dark:border-white/10">
             <ThemeToggle />
           </div>
         </div>
@@ -425,7 +426,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
         data-search-open={searchOpen}
       >
         {variant === "dashboard" ? (
-          /* ── Dashboard Navbar (existing style, minor update) ── */
+          /* ── Dashboard Navbar ── */
           <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 md:px-8">
             <Link href="/" className="flex shrink-0 items-center gap-3">
               <Image
@@ -433,7 +434,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                 alt="Logo Desa Padangloang"
                 width={36}
                 height={36}
-                className="rounded-sm object-contain"
+                className="rounded-sm object-contain dark:brightness-0 dark:invert"
                 priority
               />
               <div className="flex flex-col leading-tight">
@@ -568,8 +569,8 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
             </div>
           </nav>
         ) : (
-          /* ── Public Navbar (Floating Island) ── */
-          <nav className="mx-auto mt-3 flex max-w-5xl items-center justify-between rounded-full bg-[#282834] px-6 py-2 shadow-lg max-md:mx-4 max-md:px-4">
+          /* ── Public Navbar (Floating Island — Glassmorphism) ── */
+          <nav className="mx-auto mt-3 flex max-w-5xl items-center justify-between rounded-full border border-[#dee2de]/30 bg-white/70 px-6 py-2 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-[#282834]/70 max-md:mx-4 max-md:px-4">
             {/* Logo */}
             <Link href="/" className="flex shrink-0 items-center gap-3">
               <Image
@@ -577,14 +578,14 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                 alt="Logo Desa Padangloang"
                 width={32}
                 height={32}
-                className="rounded-sm object-contain brightness-0 invert"
+                className="rounded-sm object-contain dark:brightness-0 dark:invert"
                 priority
               />
               <div className="flex flex-col leading-tight">
-                <span className="text-[13px] font-extrabold tracking-tight text-white max-sm:hidden">
+                <span className="text-[13px] font-extrabold tracking-tight text-[#171717] dark:text-white max-sm:hidden">
                   Desa Padangloang
                 </span>
-                <span className="text-[9px] font-bold tracking-wide text-white/70 max-sm:hidden">
+                <span className="text-[9px] font-bold tracking-wide text-[#6b7280] dark:text-white/70 max-sm:hidden">
                   Kec. Dua Pitue, Kab. Sidenreng Rappang
                 </span>
               </div>
@@ -600,14 +601,14 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="size-8 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-white/30"
+                    className="size-8 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-black/20 dark:focus-visible:ring-white/30"
                   >
                     <Avatar className="size-7">
                       <AvatarImage
                         src={session?.user?.image ?? undefined}
                         alt={session?.user?.name ?? "Pengguna"}
                       />
-                      <AvatarFallback className="bg-white/10 text-[10px] text-white">
+                      <AvatarFallback className="bg-black/5 text-[10px] text-[#171717] dark:bg-white/10 dark:text-white">
                         {getInitials(session?.user?.name)}
                       </AvatarFallback>
                     </Avatar>
@@ -615,25 +616,25 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="w-48 border border-[#dee2de] bg-white"
+                  className="w-48 border border-[#dee2de]/30 bg-white/90 backdrop-blur-md dark:border-white/10 dark:bg-[#282834]/90"
                 >
                   {session ? (
                     <>
                       <DropdownMenuLabel className="font-normal">
-                        <p className="truncate text-sm font-medium text-[#282834]">
+                        <p className="truncate text-sm font-medium text-[#282834] dark:text-white">
                           {session.user.name}
                         </p>
-                        <p className="truncate text-xs text-[#282834]/60">
+                        <p className="truncate text-xs text-[#282834]/60 dark:text-white/60">
                           {session.user.email}
                         </p>
                       </DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-[#dee2de]" />
+                      <DropdownMenuSeparator className="bg-[#dee2de]/30 dark:bg-white/10" />
                       <DropdownMenuGroup>
                         {isPrivileged && (
                           <DropdownMenuItem asChild>
                             <Link
                               href="/dashboard"
-                              className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] hover:bg-[#f9faf7]"
+                              className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-[#f9faf7] dark:text-white dark:hover:bg-white/10"
                             >
                               <LayoutDashboard className="size-4" />
                               Dashboard
@@ -643,7 +644,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                         <DropdownMenuItem asChild>
                           <Link
                             href="/akun/dashboard"
-                            className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] hover:bg-[#f9faf7]"
+                            className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-[#f9faf7] dark:text-white dark:hover:bg-white/10"
                           >
                             <LayoutDashboard className="size-4" />
                             Dashboard Saya
@@ -652,7 +653,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                         <DropdownMenuItem asChild>
                           <Link
                             href={`/akun/${session.user.id}`}
-                            className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] hover:bg-[#f9faf7]"
+                            className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-[#f9faf7] dark:text-white dark:hover:bg-white/10"
                           >
                             <User className="size-4" />
                             Profil
@@ -672,7 +673,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                       <DropdownMenuItem asChild>
                         <Link
                           href="/auth/signin"
-                          className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] hover:bg-[#f9faf7]"
+                          className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-[#f9faf7] dark:text-white dark:hover:bg-white/10"
                         >
                           <LogIn className="size-4" />
                           Masuk
@@ -681,7 +682,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                       <DropdownMenuItem asChild>
                         <Link
                           href="/auth/signup"
-                          className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] hover:bg-[#f9faf7]"
+                          className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-[#f9faf7] dark:text-white dark:hover:bg-white/10"
                         >
                           <UserPlus className="size-4" />
                           Daftar
@@ -695,7 +696,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/10 md:hidden"
+                className="text-[#171717] hover:bg-black/5 dark:text-white dark:hover:bg-white/10 md:hidden"
                 onClick={() => setMobileOpen((o) => !o)}
                 aria-label="Toggle menu"
               >
