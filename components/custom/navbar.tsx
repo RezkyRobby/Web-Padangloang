@@ -221,15 +221,8 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                 <DropdownMenuContent
                   align="center"
                   sideOffset={14}
-                  className="group relative min-w-56 rounded-2xl border border-white/30 bg-white/30 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_0_0_1px_rgba(255,255,255,0.15)_inset] backdrop-blur-2xl dark:border-white/15 dark:bg-[#282834]/40 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.05)_inset]"
+                  className="min-w-56 rounded-2xl border border-white/30 bg-white/30 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_0_0_1px_rgba(255,255,255,0.15)_inset] backdrop-blur-2xl dark:border-white/15 dark:bg-[#282834]/40 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.05)_inset]"
                 >
-                  {/* ── Caret / Segitiga Penunjuk yang Dinamis ── */}
-                  {/* 1. Jika menu terbuka di BAWAH trigger (panah menghadap KE ATAS) */}
-                  <div className="absolute -top-[6px] left-1/2 hidden h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-tl-[2px] border-l border-t border-white/60 bg-white/80 shadow-[-2px_-2px_4px_rgba(255,255,255,0.4)] backdrop-blur-2xl group-data-[side=bottom]:block dark:border-white/15 dark:bg-[#282834]/90" />
-                  
-                  {/* 2. Jika menu otomatis terbuka di ATAS trigger (panah menghadap KE BAWAH) */}
-                  <div className="absolute -bottom-[6px] left-1/2 hidden h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-br-[2px] border-b border-r border-white/60 bg-white/80 shadow-[2px_2px_4px_rgba(255,255,255,0.4)] backdrop-blur-2xl group-data-[side=top]:block dark:border-white/15 dark:bg-[#282834]/90" />
-                  
                   <DropdownMenuGroup className="relative z-10 flex flex-col gap-1">
                     {link.children.map((child) => {
                       const childActive = pathname === child.href;
