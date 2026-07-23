@@ -1,23 +1,25 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Source_Serif_4, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/custom/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const display = Source_Serif_4({
   subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const body = Inter({
   subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Website Kodim 1408 Makassar",
+  title: "Desa Padangloang — Sidrap",
   description:
-    "Website resmi Kodim 1408/Mks. Menyajikan informasi terkini seputar kegiatan yang dilakukan oleh Kodim 1408/Mks di wilayah Kota Makassar dan sekitarnya.",
+    "Website resmi Desa Padangloang, Kecamatan Dua Pitue, Kabupaten Sidenreng Rappang (Sidrap), Sulawesi Selatan. Menyajikan informasi profil desa, berita, UMKM, wisata, dan layanan masyarakat.",
   icons: {
     icon: "/favicon-16x16.png",
     shortcut: "/favicon-32x32.png",
@@ -33,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${display.variable} ${body.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
