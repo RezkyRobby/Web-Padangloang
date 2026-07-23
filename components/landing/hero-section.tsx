@@ -34,7 +34,7 @@ export function HeroSection() {
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
-        <div className="mb-6 inline-block rounded-full border border-white/20 bg-white/10 px-6 py-1.5 text-sm font-medium text-white/80 backdrop-blur-sm">
+        <div className="mb-6 inline-block rounded-full border border-white/20 bg-white/15 px-6 py-1.5 text-sm font-medium text-white/90 backdrop-blur-xl shadow-[0_0_20px_rgba(255,255,255,0.08),0_0_0_1px_rgba(255,255,255,0.15)_inset]">
           Kecamatan Dua Pitue, Kabupaten Sidenreng Rappang
         </div>
         
@@ -61,7 +61,7 @@ export function HeroSection() {
           </Button>
           <Button
             variant="outline"
-            className="h-12 rounded-xs border-white/30 bg-white/10 px-8 font-body text-sm font-semibold text-white backdrop-blur-sm hover:bg-white/20"
+            className="h-12 rounded-xs border-white/30 bg-white/15 px-8 font-body text-sm font-semibold text-white backdrop-blur-xl shadow-[0_0_20px_rgba(255,255,255,0.05),0_0_0_1px_rgba(255,255,255,0.15)_inset] hover:bg-white/25"
             asChild
           >
             <a href="/profil">Tentang Desa</a>

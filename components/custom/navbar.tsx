@@ -221,16 +221,14 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                 <DropdownMenuContent
                   align="center"
                   sideOffset={14}
-                  // Tambahkan "group" agar panah bisa mendeteksi posisi menu
-                  className="group relative min-w-56 rounded-2xl border border-white/60 bg-white/60 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-2xl dark:border-white/15 dark:bg-[#282834]/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+                  className="group relative min-w-56 rounded-2xl border border-white/30 bg-white/30 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_0_0_1px_rgba(255,255,255,0.15)_inset] backdrop-blur-2xl dark:border-white/15 dark:bg-[#282834]/40 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.05)_inset]"
                 >
-                  {/* ── Segitiga Penunjuk (Caret) Menyatu dengan Glassmorphism ── */}
+                  {/* ── Caret / Segitiga Penunjuk yang Dinamis ── */}
+                  {/* 1. Jika menu terbuka di BAWAH trigger (panah menghadap KE ATAS) */}
+                  <div className="absolute -top-[6px] left-1/2 hidden h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-tl-[2px] border-l border-t border-white/60 bg-white/80 shadow-[-2px_-2px_4px_rgba(255,255,255,0.4)] backdrop-blur-2xl group-data-[side=bottom]:block dark:border-white/15 dark:bg-[#282834]/90" />
                   
-                  {/* 1. Panah menghadap KE ATAS (Muncul saat dropdown berada di BAWAH tombol) */}
-                  <div className="absolute -top-[7px] left-1/2 hidden h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-tl-[3px] border-l border-t border-white/60 bg-white/60 backdrop-blur-2xl group-data-[side=bottom]:block dark:border-white/15 dark:bg-[#282834]/80" />
-                  
-                  {/* 2. Panah menghadap KE BAWAH (Muncul jika dropdown otomatis terbuka ke ATAS tombol karena layar sempit) */}
-                  <div className="absolute -bottom-[7px] left-1/2 hidden h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-br-[3px] border-b border-r border-white/60 bg-white/60 backdrop-blur-2xl group-data-[side=top]:block dark:border-white/15 dark:bg-[#282834]/80" />
+                  {/* 2. Jika menu otomatis terbuka di ATAS trigger (panah menghadap KE BAWAH) */}
+                  <div className="absolute -bottom-[6px] left-1/2 hidden h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-br-[2px] border-b border-r border-white/60 bg-white/80 shadow-[2px_2px_4px_rgba(255,255,255,0.4)] backdrop-blur-2xl group-data-[side=top]:block dark:border-white/15 dark:bg-[#282834]/90" />
                   
                   <DropdownMenuGroup className="relative z-10 flex flex-col gap-1">
                     {link.children.map((child) => {
@@ -302,13 +300,13 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
     >
       {/* Overlay */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 backdrop-blur-xl"
         onClick={() => setMobileOpen(false)}
       />
       {/* Drawer */}
       <div
         className={cn(
-          "absolute right-0 top-0 h-full w-72 bg-white/95 shadow-xl backdrop-blur-xl transition-transform duration-300 dark:bg-[#282834]/95",
+          "absolute right-0 top-0 h-full w-72 bg-white/50 shadow-2xl backdrop-blur-2xl border-l border-white/20 transition-transform duration-300 dark:bg-[#282834]/50 dark:border-white/10",
           mobileOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
@@ -616,8 +614,8 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
             </div>
           </nav>
         ) : (
-          /* ── Public Navbar (Floating Island — Glassmorphism) ── */
-          <nav className="mx-auto mt-3 flex max-w-5xl items-center justify-between rounded-full border border-white/40 bg-white/60 px-6 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.08)] backdrop-blur-2xl transition-all duration-300 dark:border-white/10 dark:bg-[#282834]/60 max-md:mx-4 max-md:px-4">
+          /* ── Public Navbar (Floating Island — Glassmorphism Diperkuat) ── */
+          <nav className="mx-auto mt-3 flex max-w-5xl items-center justify-between rounded-full border border-white/30 bg-white/30 px-6 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_0_0_1px_rgba(255,255,255,0.1)_inset] backdrop-blur-2xl transition-all duration-300 dark:border-white/10 dark:bg-[#282834]/40 max-md:mx-4 max-md:px-4">
             {/* Logo */}
             <Link href="/" className="flex shrink-0 items-center gap-3 hover:opacity-80 transition-opacity">
               <Image
@@ -663,7 +661,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="w-48 border border-white/60 bg-white/70 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-2xl dark:border-white/15 dark:bg-[#282834]/80"
+                  className="w-48 border border-white/30 bg-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_0_0_1px_rgba(255,255,255,0.15)_inset] backdrop-blur-2xl dark:border-white/15 dark:bg-[#282834]/40 dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.05)_inset]"
                 >
                   {session ? (
                     <>

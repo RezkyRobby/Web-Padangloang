@@ -37,7 +37,7 @@ export function WisataCard({ id, nama, lokasi, kategori, gambar }: WisataCardPro
           </div>
         )}
         {/* Badge kategori */}
-        <span className="absolute left-3 top-3 rounded-xs bg-white/90 px-3 py-1 text-[11px] font-semibold text-obsidian shadow-xs backdrop-blur-sm dark:bg-black/60 dark:text-white">
+        <span className="absolute left-3 top-3 rounded-xs bg-white/70 px-3 py-1 text-[11px] font-semibold text-obsidian shadow-[0_0_12px_rgba(255,255,255,0.1),0_0_0_1px_rgba(255,255,255,0.2)_inset] backdrop-blur-xl dark:bg-black/50 dark:text-white dark:shadow-[0_0_12px_rgba(0,0,0,0.2)]">
           {kategoriLabel}
         </span>
       </div>

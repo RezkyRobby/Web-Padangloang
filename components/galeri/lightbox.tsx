@@ -63,7 +63,7 @@ export default function Lightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-2xl"
       onClick={onClose}
       role="dialog"
       aria-label="Lightbox galeri"
@@ -72,7 +72,7 @@ export default function Lightbox({
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20"
+        className="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl shadow-[0_0_20px_rgba(255,255,255,0.08),0_0_0_1px_rgba(255,255,255,0.15)_inset] transition-colors hover:bg-white/25"
         aria-label="Tutup lightbox"
       >
         <X className="h-6 w-6" />
@@ -85,7 +85,7 @@ export default function Lightbox({
             e.stopPropagation();
             handlePrev();
           }}
-          className="absolute left-4 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20"
+          className="absolute left-4 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl shadow-[0_0_20px_rgba(255,255,255,0.08),0_0_0_1px_rgba(255,255,255,0.15)_inset] transition-colors hover:bg-white/25"
           aria-label="Sebelumnya"
         >
           <ChevronLeft className="h-6 w-6" />
@@ -99,7 +99,7 @@ export default function Lightbox({
             e.stopPropagation();
             handleNext();
           }}
-          className="absolute right-4 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20 md:flex"
+          className="absolute right-4 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl shadow-[0_0_20px_rgba(255,255,255,0.08),0_0_0_1px_rgba(255,255,255,0.15)_inset] transition-colors hover:bg-white/25 md:flex"
           aria-label="Selanjutnya"
         >
           <ChevronRight className="h-6 w-6" />
@@ -148,7 +148,7 @@ export default function Lightbox({
             e.stopPropagation();
             handleNext();
           }}
-          className="absolute bottom-4 right-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20 md:hidden"
+          className="absolute bottom-4 right-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl shadow-[0_0_20px_rgba(255,255,255,0.08),0_0_0_1px_rgba(255,255,255,0.15)_inset] transition-colors hover:bg-white/25 md:hidden"
           aria-label="Selanjutnya"
         >
           <ChevronRight className="h-6 w-6" />

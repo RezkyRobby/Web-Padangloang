@@ -94,7 +94,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       {/* Main Content Area */}
       <div className="flex flex-1 flex-col min-h-screen transition-all duration-300">
         {/* ── Top Bar ──────────────────────────────────────────────────────── */}
-        <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-4 border-b border-sage dark:border-[#414943] bg-white/80 dark:bg-[#1a1a1a]/80 backdrop-blur-lg px-4 lg:px-6">
+        <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-4 border-b border-sage dark:border-[#414943] bg-white/50 dark:bg-[#1a1a1a]/50 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.15)_inset] px-4 lg:px-6">
           {/* Mobile sidebar toggle & Breadcrumbs */}
           <div className="flex flex-1 items-center gap-3 pl-10 lg:pl-0">
             {/* Breadcrumbs */}
