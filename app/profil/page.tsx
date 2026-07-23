@@ -20,29 +20,90 @@ interface DesaData {
 
 async function getDesaData(): Promise<DesaData> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  try {
-    const res = await fetch(`${baseUrl}/api/desa`, {
-      cache: "no-store",
-    });
-    if (!res.ok) throw new Error("Gagal mengambil data desa");
-    return res.json();
-  } catch {
-    // Fallback data
-    return {
-      nama: "Desa Padangloang",
-      sejarah: "Desa Padangloang merupakan salah satu desa di Kecamatan Dua Pitue, Kabupaten Sidenreng Rappang, Provinsi Sulawesi Selatan. Desa ini memiliki luas wilayah 2,75 km² yang terbagi dalam 3 dusun. Masyarakat Desa Padangloang hidup rukun dan damai dengan mayoritas mata pencaharian sebagai petani dan peternak.",
-      visi: "Terwujudnya Desa Padangloang yang Maju, Mandiri, dan Sejahtera melalui Peningkatan Kualitas Sumber Daya Manusia, Pengembangan Potensi Lokal, dan Tata Kelola Pemerintahan yang Baik.",
-      misi: "1. Meningkatkan kualitas pelayanan publik dan tata kelola pemerintahan desa yang transparan dan akuntabel.\n2. Mengembangkan potensi ekonomi lokal melalui pemberdayaan UMKM dan sektor pertanian.\n3. Meningkatkan kualitas sumber daya manusia melalui pendidikan dan pelatihan keterampilan.\n4. Membangun dan memelihara infrastruktur desa yang memadai.\n5. Melestarikan nilai-nilai budaya dan kearifan lokal.",
-      luasWilayah: 2.75,
-      jumlahPenduduk: 1599,
-      jumlahKK: 561,
-      jumlahDusun: 3,
-      batasUtara: "Kecamatan Baranti",
-      batasTimur: "Desa Kalosi",
-      batasSelatan: "Kecamatan Panca Lautang",
-      batasBarat: "Desa Bila",
-      fotoKepalaDesa: null,
-    };
+    try {
+      const res = await fetch(`${baseUrl}/api/desa`, {
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error("Gagal mengambil data desa");
+      return res.json();
+    } catch {
+      // Fallback data
+      return {
+        nama: "Desa Padangloang",
+        sejarah: `<p>Desa Padangloang merupakan salah satu desa yang ada pada Kecamatan Dua Pitue, Kabupaten Sidenreng Rappang, atau lebih dikenal dengan nama Kabupaten Sidrap. Sebelum berdiri sebagai Desa, Desa Padangloang merupakan hasil pemekaran dari Kelurahan Lancirang.</p>
+
+<p>Pada tahun 1985 Padangloang terbentuk menjadi Desa persiapan, yang merupakan hasil pemekaran dari Kelurahan Lancirang yang terdiri dari 4 Dusun yaitu Dusun I Padangloang, Dusun II Salonase, Dusun III Lampe'e, Dusun IV Ajubissue. Kepala Desa persiapan di jabat oleh Hade. M pada tahun 1985-1990 yang di tunjuk langsung oleh Bupati Sidenreng Rappang A. Salipolo. SH. Pada tahun 1990-1991 Kepala Desa di gantikan oleh bapak Landikkang dan di tunjuk langsung oleh Bupati, dengan demikian kepemimpinannya hanya dalam masa 1 tahun dikarenakan Desa Padangloang telah di persiapkan menjadi desa definitif.</p>
+
+<p>Pada tahun 1992 Padangloang resmi menjadi Desa definitif dan di tahun yang sama diadakan pemilihan pertama Kepala Desa yang di pilih langsung oleh masyarakat adalah Drs. Muh. Kaseng. AP yang menjabat pada tahun 1992-2005 dan merupakan Kepala Desa yang paling lama masa jabatannya. Pada tahun 1996 Desa Padangloang kembali dimekarkan menjadi 2 Desa yakni Padangloang dan Padangloang Alau yang dusun III Lampe'e masuk di wilayah Desa Padangloang Alau. Kemudian pada tahun 2006 dilakukan pemilihan Kepala Desa dimana pada saat itu yang terpilih kembali adalah Hade. M dan masa kepemimpinannya 2006-2012.</p>
+
+<p>Tahun 2013 di lakukan kembali pemilihan, dan Kepala Desa terpilih adalah Hamsah. P. ST periode 2013-2019, kemudian 2020 dijabat oleh PLT Daris selama 8 bulan dikarenakan beliau juga masuk dalam pemilihan calon Kepala Desa berikutnya, dan pada sisa jabatannya dijabat 4 bulan olah PLT Jufri, kemudian setelahnya diadakan pemilihan untuk periode berikutnya yang terpilih adalah Syamsu Alam yang memimpin Desa Padangloang kedepannya pada 2021-2026.</p>
+
+<h3 class="mt-8 font-display text-headline-small font-semibold text-obsidian dark:text-white">Tabel 1. Kepala Desa dan Masa Pemerintahan</h3>
+
+<div class="mt-4 overflow-x-auto">
+  <table class="w-full border-collapse rounded-[8px] overflow-hidden border border-sage dark:border-[#414943]">
+    <thead>
+      <tr class="bg-graphite-night dark:bg-[#1a1a1a]">
+        <th class="px-4 py-3 text-left font-body text-label-medium font-semibold text-white">NO</th>
+        <th class="px-4 py-3 text-left font-body text-label-medium font-semibold text-white">NAMA</th>
+        <th class="px-4 py-3 text-left font-body text-label-medium font-semibold text-white">JABATAN</th>
+        <th class="px-4 py-3 text-left font-body text-label-medium font-semibold text-white">PERIODE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="border-t border-sage dark:border-[#414943]">
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">1</td>
+        <td class="px-4 py-3 font-body text-body-medium text-obsidian dark:text-white font-medium">HADE. M</td>
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">Kepala Desa</td>
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">1985-1990 & 2006-2012</td>
+      </tr>
+      <tr class="border-t border-sage dark:border-[#414943]">
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">2</td>
+        <td class="px-4 py-3 font-body text-body-medium text-obsidian dark:text-white font-medium">Drs. MUH. KASENG. AP</td>
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">Kepala Desa</td>
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">1992-2005</td>
+      </tr>
+      <tr class="border-t border-sage dark:border-[#414943]">
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">3</td>
+        <td class="px-4 py-3 font-body text-body-medium text-obsidian dark:text-white font-medium">HAMSAH. P. ST</td>
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">Kepala Desa</td>
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">2013-2019</td>
+      </tr>
+      <tr class="border-t border-sage dark:border-[#414943]">
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">4</td>
+        <td class="px-4 py-3 font-body text-body-medium text-obsidian dark:text-white font-medium">DARIS</td>
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">PLT Kades</td>
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">Januari - Agustus 2019</td>
+      </tr>
+      <tr class="border-t border-sage dark:border-[#414943]">
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">5</td>
+        <td class="px-4 py-3 font-body text-body-medium text-obsidian dark:text-white font-medium">MUH. JUFRI</td>
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">PLT Kades</td>
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">Oktober 2020 - Januari 2020</td>
+      </tr>
+      <tr class="border-t border-sage dark:border-[#414943]">
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">6</td>
+        <td class="px-4 py-3 font-body text-body-medium text-obsidian dark:text-white font-medium">SYAMSU ALAM</td>
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">Kepala Desa</td>
+        <td class="px-4 py-3 font-body text-body-medium text-iron dark:text-[#c2c8bd]">Sekarang</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mt-4 text-sm italic text-iron dark:text-[#c2c8bd] font-body">Sumber: Arsip Desa Padangloang.</p>`,
+        visi: "Terwujudnya Desa Padangloang yang Maju, Mandiri, dan Sejahtera melalui Peningkatan Kualitas Sumber Daya Manusia, Pengembangan Potensi Lokal, dan Tata Kelola Pemerintahan yang Baik.",
+        misi: "1. Meningkatkan kualitas pelayanan publik dan tata kelola pemerintahan desa yang transparan dan akuntabel.\n2. Mengembangkan potensi ekonomi lokal melalui pemberdayaan UMKM dan sektor pertanian.\n3. Meningkatkan kualitas sumber daya manusia melalui pendidikan dan pelatihan keterampilan.\n4. Membangun dan memelihara infrastruktur desa yang memadai.\n5. Melestarikan nilai-nilai budaya dan kearifan lokal.",
+        luasWilayah: 2.75,
+        jumlahPenduduk: 1599,
+        jumlahKK: 561,
+        jumlahDusun: 3,
+        batasUtara: "Kecamatan Baranti",
+        batasTimur: "Desa Kalosi",
+        batasSelatan: "Kecamatan Panca Lautang",
+        batasBarat: "Desa Bila",
+        fotoKepalaDesa: null,
+      };
   }
 }
 
@@ -180,11 +241,10 @@ export default async function ProfilPage() {
               Sejarah Desa
             </h2>
             <div className="mt-8 rounded-[16px] border border-sage bg-paper p-8 shadow-paper-sm dark:border-[#414943] dark:bg-[#1a1a1a] md:p-12">
-              <div className="space-y-6 font-body text-body-large leading-relaxed text-iron dark:text-[#c2c8bd]">
-                {desa.sejarah.split("\n").map((paragraf, i) => (
-                  <p key={i}>{paragraf}</p>
-                ))}
-              </div>
+              <div
+                className="profil-sejarah font-body text-body-large leading-relaxed text-iron dark:text-[#c2c8bd]"
+                dangerouslySetInnerHTML={{ __html: desa.sejarah }}
+              />
             </div>
           </section>
 
