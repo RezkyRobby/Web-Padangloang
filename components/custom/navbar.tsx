@@ -221,15 +221,16 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                 <DropdownMenuContent
                   align="center"
                   sideOffset={14}
-                  // Tambahkan class "group" di sini agar elemen anak bisa membaca posisi (side) menu
-                  className="group relative min-w-56 rounded-2xl border border-white/60 bg-white/50 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-2xl dark:border-white/15 dark:bg-[#282834]/60 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+                  // Tambahkan "group" agar panah bisa mendeteksi posisi menu
+                  className="group relative min-w-56 rounded-2xl border border-white/60 bg-white/60 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-2xl dark:border-white/15 dark:bg-[#282834]/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
                 >
-                  {/* ── Caret / Segitiga Penunjuk yang Dinamis ── */}
-                  {/* 1. Jika menu terbuka di BAWAH trigger (panah menghadap KE ATAS) */}
-                  <div className="absolute -top-[6px] left-1/2 hidden h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-tl-[2px] border-l border-t border-white/60 bg-white/80 shadow-[-2px_-2px_4px_rgba(255,255,255,0.4)] backdrop-blur-2xl group-data-[side=bottom]:block dark:border-white/15 dark:bg-[#282834]/90" />
+                  {/* ── Segitiga Penunjuk (Caret) Menyatu dengan Glassmorphism ── */}
                   
-                  {/* 2. Jika menu otomatis terbuka di ATAS trigger (panah menghadap KE BAWAH) */}
-                  <div className="absolute -bottom-[6px] left-1/2 hidden h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-br-[2px] border-b border-r border-white/60 bg-white/80 shadow-[2px_2px_4px_rgba(255,255,255,0.4)] backdrop-blur-2xl group-data-[side=top]:block dark:border-white/15 dark:bg-[#282834]/90" />
+                  {/* 1. Panah menghadap KE ATAS (Muncul saat dropdown berada di BAWAH tombol) */}
+                  <div className="absolute -top-[7px] left-1/2 hidden h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-tl-[3px] border-l border-t border-white/60 bg-white/60 backdrop-blur-2xl group-data-[side=bottom]:block dark:border-white/15 dark:bg-[#282834]/80" />
+                  
+                  {/* 2. Panah menghadap KE BAWAH (Muncul jika dropdown otomatis terbuka ke ATAS tombol karena layar sempit) */}
+                  <div className="absolute -bottom-[7px] left-1/2 hidden h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-br-[3px] border-b border-r border-white/60 bg-white/60 backdrop-blur-2xl group-data-[side=top]:block dark:border-white/15 dark:bg-[#282834]/80" />
                   
                   <DropdownMenuGroup className="relative z-10 flex flex-col gap-1">
                     {link.children.map((child) => {
