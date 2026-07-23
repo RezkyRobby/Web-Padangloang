@@ -174,44 +174,72 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
     setMobileDropdownOpen((prev) => (prev === label ? null : label));
   }
 
+  // Track which dropdown is open
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
   // ── Desktop Navigation ──
   const renderDesktopNav = () => (
     <ul className="hidden items-center gap-0.5 md:flex">
       {links.map((link) => {
         if (isDropdown(link)) {
           const dropdownActive =
-            pathname.startsWith(link.href) && link.href !== "/";
+            (pathname.startsWith(link.href) && link.href !== "/") ||
+            openDropdown === link.label;
           return (
             <li key={link.href}>
-              <DropdownMenu>
+              <DropdownMenu
+                open={openDropdown === link.label}
+                onOpenChange={(open) =>
+                  setOpenDropdown(open ? link.label : null)
+                }
+              >
                 <DropdownMenuTrigger asChild>
                   <button
                     className={cn(
-                      "flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-semibold text-[#171717] transition-colors outline-none hover:bg-black/5 dark:text-white dark:hover:bg-white/10",
+                      "flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-semibold text-[#171717] transition-all outline-none duration-200 hover:bg-black/5 dark:text-white dark:hover:bg-white/10",
                       dropdownActive && "bg-black/10 dark:bg-white/15",
+                      openDropdown === link.label &&
+                        "bg-black/10 shadow-sm dark:bg-white/15",
                     )}
                   >
                     {link.label}
-                    <ChevronDown className="size-3.5" />
+                    <ChevronDown
+                      className={cn(
+                        "size-3.5 transition-transform duration-200",
+                        openDropdown === link.label && "rotate-180",
+                      )}
+                    />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="start"
-                  className="min-w-48 border border-[#dee2de]/30 bg-white/90 backdrop-blur-md dark:border-white/10 dark:bg-[#282834]/90"
+                  sideOffset={10}
+                  className="relative min-w-48 border border-[#dee2de]/30 bg-white/80 backdrop-blur-2xl shadow-lg dark:border-white/10 dark:bg-[#282834]/80"
                 >
+                  {/* ── Caret pointer ── */}
+                  <div className="absolute -top-[5px] left-6 h-3 w-3 rotate-45 border-l border-t border-[#dee2de]/30 bg-white dark:border-white/10 dark:bg-[#282834]" />
                   <DropdownMenuGroup>
                     {link.children.map((child) => {
                       const childActive = pathname === child.href;
                       const ChildIcon = child.icon;
                       return (
-                        <DropdownMenuItem key={child.href} asChild>
+                        <DropdownMenuItem
+                          key={child.href}
+                          asChild
+                          className="relative"
+                        >
                           <Link
                             href={child.href}
                             className={cn(
-                              "flex items-center gap-3 px-4 py-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-[#f9faf7] dark:text-white dark:hover:bg-white/10",
-                              childActive && "!bg-[#f9faf7] font-bold dark:!bg-white/15",
+                              "flex items-center gap-3 px-4 py-3 text-[13px] font-semibold text-[#282834] transition-all duration-150 hover:bg-[#f9faf7] hover:pl-5 dark:text-white dark:hover:bg-white/10",
+                              childActive &&
+                                "!bg-[#f9faf7] font-bold dark:!bg-white/15 dark:!text-white",
                             )}
                           >
+                            {/* Left accent bar for active item */}
+                            {childActive && (
+                              <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-[#282834] dark:bg-white" />
+                            )}
                             <ChildIcon className="size-4 shrink-0 text-[#282834]/60 dark:text-white/60" />
                             {child.label}
                           </Link>
