@@ -1,5 +1,3 @@
-// TODO: refactor code for uniformity and readability
-// TODO: multiple category for posts
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
