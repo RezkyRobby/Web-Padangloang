@@ -131,9 +131,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
   const router = useRouter();
   const { data: session } = authClient.useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(
-    null,
-  );
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -184,7 +182,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
 
   // ── Desktop Navigation ──
   const renderDesktopNav = () => (
-    <ul className="hidden items-center gap-0.5 md:flex">
+    <ul className="hidden items-center gap-1 md:flex">
       {links.map((link) => {
         if (isDropdown(link)) {
           const dropdownActive =
@@ -204,29 +202,36 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                 <DropdownMenuTrigger asChild>
                   <button
                     className={cn(
-                      "flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-semibold text-[#171717] transition-all outline-none duration-200 hover:bg-black/5 dark:text-white dark:hover:bg-white/10",
-                      dropdownActive && "bg-black/10 dark:bg-white/15",
+                      "flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-semibold text-[#171717] outline-none transition-all duration-300 hover:bg-black/5 dark:text-white dark:hover:bg-white/10",
+                      dropdownActive &&
+                        "bg-black/5 shadow-[inset_0_1px_2px_rgba(255,255,255,0.6)] dark:bg-white/15 dark:shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]",
                       openDropdown === link.label &&
-                        "bg-black/10 shadow-sm dark:bg-white/15",
+                        "bg-black/10 shadow-[inset_0_1px_4px_rgba(255,255,255,0.8)] dark:bg-white/20"
                     )}
                   >
                     {link.label}
                     <ChevronDown
                       className={cn(
-                        "size-3.5 transition-transform duration-200",
-                        openDropdown === link.label && "rotate-180",
+                        "size-3.5 transition-transform duration-300",
+                        openDropdown === link.label && "rotate-180"
                       )}
                     />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  align="start"
-                  sideOffset={10}
-                  className="relative min-w-48 border border-[#dee2de]/30 bg-white/80 backdrop-blur-2xl shadow-lg dark:border-white/10 dark:bg-[#282834]/80"
+                  align="center"
+                  sideOffset={14}
+                  // Tambahkan class "group" di sini agar elemen anak bisa membaca posisi (side) menu
+                  className="group relative min-w-56 rounded-2xl border border-white/60 bg-white/50 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-2xl dark:border-white/15 dark:bg-[#282834]/60 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
                 >
-                  {/* ── Caret pointer ── */}
-                  <div className="absolute -top-[5px] left-6 h-3 w-3 rotate-45 border-l border-t border-[#dee2de]/30 bg-white dark:border-white/10 dark:bg-[#282834]" />
-                  <DropdownMenuGroup>
+                  {/* ── Caret / Segitiga Penunjuk yang Dinamis ── */}
+                  {/* 1. Jika menu terbuka di BAWAH trigger (panah menghadap KE ATAS) */}
+                  <div className="absolute -top-[6px] left-1/2 hidden h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-tl-[2px] border-l border-t border-white/60 bg-white/80 shadow-[-2px_-2px_4px_rgba(255,255,255,0.4)] backdrop-blur-2xl group-data-[side=bottom]:block dark:border-white/15 dark:bg-[#282834]/90" />
+                  
+                  {/* 2. Jika menu otomatis terbuka di ATAS trigger (panah menghadap KE BAWAH) */}
+                  <div className="absolute -bottom-[6px] left-1/2 hidden h-3.5 w-3.5 -translate-x-1/2 rotate-45 rounded-br-[2px] border-b border-r border-white/60 bg-white/80 shadow-[2px_2px_4px_rgba(255,255,255,0.4)] backdrop-blur-2xl group-data-[side=top]:block dark:border-white/15 dark:bg-[#282834]/90" />
+                  
+                  <DropdownMenuGroup className="relative z-10 flex flex-col gap-1">
                     {link.children.map((child) => {
                       const childActive = pathname === child.href;
                       const ChildIcon = child.icon;
@@ -234,21 +239,26 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                         <DropdownMenuItem
                           key={child.href}
                           asChild
-                          className="relative"
+                          className="relative outline-none"
                         >
                           <Link
                             href={child.href}
                             className={cn(
-                              "flex items-center gap-3 px-4 py-3 text-[13px] font-semibold text-[#282834] transition-all duration-150 hover:bg-[#f9faf7] hover:pl-5 dark:text-white dark:hover:bg-white/10",
+                              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold text-[#282834]/80 transition-all duration-300 hover:bg-white/70 hover:pl-4 hover:text-[#171717] hover:shadow-[0_2px_10px_rgba(0,0,0,0.04)] dark:text-white/80 dark:hover:bg-white/10 dark:hover:text-white",
                               childActive &&
-                                "!bg-[#f9faf7] font-bold dark:!bg-white/15 dark:!text-white",
+                                "bg-white/90 text-[#171717] shadow-sm dark:bg-white/20 dark:text-white"
                             )}
                           >
-                            {/* Left accent bar for active item */}
+                            {/* Glowing Left accent bar for active item */}
                             {childActive && (
-                              <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-[#282834] dark:bg-white" />
+                              <span className="absolute left-0 top-1/2 h-1/2 w-[3px] -translate-y-1/2 rounded-r-full bg-[#171717] shadow-[0_0_8px_rgba(23,23,23,0.4)] dark:bg-white dark:shadow-[0_0_8px_rgba(255,255,255,0.6)]" />
                             )}
-                            <ChildIcon className="size-4 shrink-0 text-[#282834]/60 dark:text-white/60" />
+                            <ChildIcon
+                              className={cn(
+                                "size-4 shrink-0 text-[#282834]/60 transition-colors duration-300 dark:text-white/60",
+                                childActive && "text-[#171717] dark:text-white"
+                              )}
+                            />
                             {child.label}
                           </Link>
                         </DropdownMenuItem>
@@ -267,8 +277,8 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
             <Link
               href={link.href}
               className={cn(
-                "flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-semibold text-[#171717] transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/10",
-                active && "bg-black/10 dark:bg-white/15",
+                "flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-semibold text-[#171717] transition-colors duration-300 hover:bg-black/5 dark:text-white dark:hover:bg-white/10",
+                active && "bg-black/5 shadow-[inset_0_1px_2px_rgba(255,255,255,0.6)] dark:bg-white/15 dark:shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]"
               )}
             >
               {link.label}
@@ -286,7 +296,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
         "fixed inset-0 z-40 transition-all duration-300 md:hidden",
         mobileOpen
           ? "pointer-events-auto opacity-100"
-          : "pointer-events-none opacity-0",
+          : "pointer-events-none opacity-0"
       )}
     >
       {/* Overlay */}
@@ -298,7 +308,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
       <div
         className={cn(
           "absolute right-0 top-0 h-full w-72 bg-white/95 shadow-xl backdrop-blur-xl transition-transform duration-300 dark:bg-[#282834]/95",
-          mobileOpen ? "translate-x-0" : "translate-x-full",
+          mobileOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
         <div className="flex h-full flex-col">
@@ -343,14 +353,14 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                         <ChevronDown
                           className={cn(
                             "size-4 text-[#171717]/60 transition-transform dark:text-white/60",
-                            isOpen && "rotate-180",
+                            isOpen && "rotate-180"
                           )}
                         />
                       </button>
                       <div
                         className={cn(
                           "overflow-hidden transition-all duration-200 ease-in-out",
-                          isOpen ? "max-h-60" : "max-h-0",
+                          isOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"
                         )}
                       >
                         <ul className="ml-2 flex flex-col gap-0.5 border-l-2 border-[#dee2de]/30 pl-3 pt-1 dark:border-white/10">
@@ -368,7 +378,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                                   className={cn(
                                     "flex items-center gap-3 rounded-md px-4 py-2.5 text-sm font-medium text-[#171717]/80 transition-colors hover:bg-black/5 hover:text-[#171717] dark:text-white/80 dark:hover:bg-white/10 dark:hover:text-white",
                                     childActive &&
-                                      "bg-black/10 font-semibold text-[#171717] dark:bg-white/15 dark:text-white",
+                                      "bg-black/10 font-semibold text-[#171717] dark:bg-white/15 dark:text-white"
                                   )}
                                 >
                                   <ChildIcon className="size-4 shrink-0 text-[#171717]/60 dark:text-white/60" />
@@ -393,7 +403,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                       onClick={() => setMobileOpen(false)}
                       className={cn(
                         "flex items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-[#171717] transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/10",
-                        active && "bg-black/10 dark:bg-white/15",
+                        active && "bg-black/10 dark:bg-white/15"
                       )}
                     >
                       {link.label}
@@ -455,9 +465,9 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
     <>
       <header
         className={cn(
-          "fixed left-0 right-0 top-0 z-50",
+          "fixed left-0 right-0 top-0 z-50 transition-all duration-300",
           variant === "dashboard" &&
-            "border-b border-foreground/10 bg-card/70 backdrop-blur-md",
+            "border-b border-foreground/10 bg-background/80 backdrop-blur-md"
         )}
         data-search-open={searchOpen}
       >
@@ -498,7 +508,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                         "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
                         active
                           ? "bg-primary/10 text-primary"
-                          : "text-foreground hover:bg-foreground/10",
+                          : "text-foreground hover:bg-foreground/10"
                       )}
                     >
                       {Icon && <Icon className="size-4 shrink-0" />}
@@ -606,9 +616,9 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
           </nav>
         ) : (
           /* ── Public Navbar (Floating Island — Glassmorphism) ── */
-          <nav className="mx-auto mt-3 flex max-w-5xl items-center justify-between rounded-full border border-[#dee2de]/30 bg-white/70 px-6 py-2 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-[#282834]/70 max-md:mx-4 max-md:px-4">
+          <nav className="mx-auto mt-3 flex max-w-5xl items-center justify-between rounded-full border border-white/40 bg-white/60 px-6 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.08)] backdrop-blur-2xl transition-all duration-300 dark:border-white/10 dark:bg-[#282834]/60 max-md:mx-4 max-md:px-4">
             {/* Logo */}
-            <Link href="/" className="flex shrink-0 items-center gap-3">
+            <Link href="/" className="flex shrink-0 items-center gap-3 hover:opacity-80 transition-opacity">
               <Image
                 src="/logo.png"
                 alt="Logo Desa Padangloang"
@@ -652,7 +662,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="w-48 border border-[#dee2de]/30 bg-white/90 backdrop-blur-md dark:border-white/10 dark:bg-[#282834]/90"
+                  className="w-48 border border-white/60 bg-white/70 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-2xl dark:border-white/15 dark:bg-[#282834]/80"
                 >
                   {session ? (
                     <>
@@ -670,7 +680,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                           <DropdownMenuItem asChild>
                             <Link
                               href="/dashboard"
-                              className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-[#f9faf7] dark:text-white dark:hover:bg-white/10"
+                              className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-white/60 dark:text-white dark:hover:bg-white/10"
                             >
                               <LayoutDashboard className="size-4" />
                               Dashboard
@@ -680,7 +690,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                         <DropdownMenuItem asChild>
                           <Link
                             href="/akun/dashboard"
-                            className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-[#f9faf7] dark:text-white dark:hover:bg-white/10"
+                            className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-white/60 dark:text-white dark:hover:bg-white/10"
                           >
                             <LayoutDashboard className="size-4" />
                             Dashboard Saya
@@ -689,7 +699,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                         <DropdownMenuItem asChild>
                           <Link
                             href={`/akun/${session.user.id}`}
-                            className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-[#f9faf7] dark:text-white dark:hover:bg-white/10"
+                            className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-white/60 dark:text-white dark:hover:bg-white/10"
                           >
                             <User className="size-4" />
                             Profil
@@ -709,7 +719,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                       <DropdownMenuItem asChild>
                         <Link
                           href="/auth/signin"
-                          className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-[#f9faf7] dark:text-white dark:hover:bg-white/10"
+                          className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-white/60 dark:text-white dark:hover:bg-white/10"
                         >
                           <LogIn className="size-4" />
                           Masuk
@@ -718,7 +728,7 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
                       <DropdownMenuItem asChild>
                         <Link
                           href="/auth/signup"
-                          className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-[#f9faf7] dark:text-white dark:hover:bg-white/10"
+                          className="flex items-center gap-3 text-[13px] font-semibold text-[#282834] transition-colors hover:bg-white/60 dark:text-white dark:hover:bg-white/10"
                         >
                           <UserPlus className="size-4" />
                           Daftar
