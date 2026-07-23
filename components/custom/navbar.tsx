@@ -175,7 +175,12 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
   }
 
   // Track which dropdown is open
+  const [mounted, setMounted] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // ── Desktop Navigation ──
   const renderDesktopNav = () => (
@@ -188,10 +193,13 @@ export default function Navbar({ variant = "public" }: NavbarProps) {
           return (
             <li key={link.href}>
               <DropdownMenu
-                open={openDropdown === link.label}
-                onOpenChange={(open) =>
-                  setOpenDropdown(open ? link.label : null)
-                }
+                {...(mounted
+                  ? {
+                      open: openDropdown === link.label,
+                      onOpenChange: (open: boolean) =>
+                        setOpenDropdown(open ? link.label : null),
+                    }
+                  : {})}
               >
                 <DropdownMenuTrigger asChild>
                   <button
